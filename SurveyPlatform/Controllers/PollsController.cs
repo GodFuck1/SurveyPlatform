@@ -40,5 +40,16 @@ namespace SurveyPlatform.Controllers
             return Ok(responseRequest);
         }
 
+        [HttpPut("{id}")]
+        public IActionResult ChooseResponse(int id,[FromForm] UpdatePollRequest updatePollRequest)
+        {
+            return Ok(updatePollRequest);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePoll(int id)
+        {
+            return StatusCode(418);
+        }
     }
 }
