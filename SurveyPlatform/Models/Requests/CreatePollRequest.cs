@@ -2,7 +2,7 @@
 
 namespace SurveyPlatform.Models.Requests
 {
-    public class PollRequest
+    public class CreatePollRequest
     {
         [Required(ErrorMessage = "Название обязательно для заполнения.")]
         [MinLength(2, ErrorMessage = "Длина названия должна быть больше 2х символов.")]

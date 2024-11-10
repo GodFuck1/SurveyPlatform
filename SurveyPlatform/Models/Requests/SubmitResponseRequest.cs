@@ -2,10 +2,8 @@
 
 namespace SurveyPlatform.Models.Requests
 {
-    public class ResponseRequest
+    public class SubmitResponseRequest
     {
-        [Required]
-        public int PollID { get; set; }
         [Required]
         public int OptionID { get; set; }
         [Required]
