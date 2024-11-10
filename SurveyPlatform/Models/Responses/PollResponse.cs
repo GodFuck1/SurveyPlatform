@@ -9,6 +9,7 @@ namespace SurveyPlatform.Models.Responses
         public string Description { get; set; }
         public DateTime CreatedIn { get; set; }
         public int AuthorID { get; set; }
+        public List<OptionResponse> Options { get; set; }
 
     }
 }
