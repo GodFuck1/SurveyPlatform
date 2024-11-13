@@ -1,4 +1,6 @@
 
+using FluentValidation.AspNetCore;
+
 namespace SurveyPlatform
 {
     public class Program
@@ -10,6 +12,7 @@ namespace SurveyPlatform
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddFluentValidationAutoValidation();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
