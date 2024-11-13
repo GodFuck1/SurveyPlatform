@@ -26,7 +26,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Опрос</returns>
         [HttpGet("{id}")]
-        public ActionResult<PollResponse> GetPoolById(int id)
+        public ActionResult<PollResponse> GetPollById(int id)
         {
             var new_pool = new PollResponse
             {
@@ -147,7 +147,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Статус 200 - удача / Статус 418 - неудачно</returns>
         [HttpDelete("{id}")]
-        public IActionResult DeletePoll(int id)
+        public ActionResult DeletePoll(int id)
         {
             return StatusCode(418);
             return StatusCode(200);
