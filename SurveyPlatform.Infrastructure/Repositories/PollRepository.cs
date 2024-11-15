@@ -19,9 +19,9 @@ namespace SurveyPlatform.Infrastructure.Repositories
             _context = context;
         }
 
-        public Poll GetPollById(int id)
+        public async Task<Poll> GetPollById(int id)
         {
-            return _context.Polls.Include(p => p.Options).FirstOrDefault(p => p.Id == id);
+            return await _context.Polls.Include(p => p.Options).FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public IEnumerable<Poll> GetAllPolls()
@@ -35,32 +35,32 @@ namespace SurveyPlatform.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
-        public void UpdatePoll(Poll poll)
+        public async void UpdatePoll(Poll poll)
         {
-            var existingPoll = GetPollById(poll.Id);
+            var existingPoll = await GetPollById(poll.Id);
             if (existingPoll != null)
             {
                 existingPoll.Title = poll.Title;
                 existingPoll.Description = poll.Description;
                 existingPoll.UpdatedAt = DateTime.UtcNow;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public void DeletePoll(int id)
+        public async void DeletePoll(int id)
         {
-            var poll = GetPollById(id);
+            var poll = await GetPollById(id);
             if (poll != null)
             {
                 _context.Polls.Remove(poll);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public void AddPollResponse(PollResponse response)
+        public async void AddPollResponse(PollResponse response)
         {
             _context.PollResponses.Add(response);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public IEnumerable<PollResponse> GetResponsesByPollId(int pollId)

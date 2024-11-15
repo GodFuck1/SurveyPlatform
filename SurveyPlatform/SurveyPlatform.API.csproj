@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Requests\Validators\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
