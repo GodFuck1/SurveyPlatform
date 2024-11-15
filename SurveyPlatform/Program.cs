@@ -1,6 +1,8 @@
 
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using SurveyPlatform.API.Models.Requests.Validators;
 using SurveyPlatform.Core.Interfaces;
 using SurveyPlatform.Infrastructure.Data;
 using SurveyPlatform.Infrastructure.Repositories;
@@ -17,6 +19,12 @@ namespace SurveyPlatform
 
             builder.Services.AddControllers();
             builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddValidatorsFromAssemblyContaining<CreatePollRequestValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<LoginUserRequestValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserRequestValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<SubmitResponseRequestValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<UpdatePollRequestValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserRequestValidator>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
