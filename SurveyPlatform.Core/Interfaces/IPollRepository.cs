@@ -9,7 +9,7 @@ namespace SurveyPlatform.Core.Interfaces
 {
     public interface IPollRepository
     {
-        Poll GetPollById(int id);
+        Task<Poll> GetPollById(int id);
         IEnumerable<Poll> GetAllPolls();
         void CreatePoll(Poll poll);
         void UpdatePoll(Poll poll);

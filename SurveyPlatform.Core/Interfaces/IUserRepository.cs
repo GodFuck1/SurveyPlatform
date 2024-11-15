@@ -9,7 +9,7 @@ namespace SurveyPlatform.Core.Interfaces
 {
     public interface IUserRepository
     {
-        User GetUserById(int id);
+        Task<User> GetUserById(int id);
         IEnumerable<User> GetAllUsers();
         void CreateUser(User user);
         void UpdateUser(User user);
