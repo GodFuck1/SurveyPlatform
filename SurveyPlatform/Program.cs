@@ -1,5 +1,9 @@
 
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using SurveyPlatform.Core.Interfaces;
+using SurveyPlatform.Infrastructure.Data;
+using SurveyPlatform.Infrastructure.Repositories;
 
 namespace SurveyPlatform
 {
@@ -17,6 +21,10 @@ namespace SurveyPlatform
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+       options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IPollRepository, PollRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
