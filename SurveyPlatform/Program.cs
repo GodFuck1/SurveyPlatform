@@ -1,11 +1,12 @@
 
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using SurveyPlatform.API.Models.Requests.Validators;
-using SurveyPlatform.Core.Interfaces;
-using SurveyPlatform.Infrastructure.Data;
-using SurveyPlatform.Infrastructure.Repositories;
+using SurveyPlatform.DAL.Interfaces;
+using SurveyPlatform.DAL.Data;
+using SurveyPlatform.DAL.Repositories;
 
 namespace SurveyPlatform
 {
@@ -20,17 +21,18 @@ namespace SurveyPlatform
             builder.Services.AddControllers();
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining<CreatePollRequestValidator>();
-            builder.Services.AddValidatorsFromAssemblyContaining<LoginUserRequestValidator>();
-            builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserRequestValidator>();
-            builder.Services.AddValidatorsFromAssemblyContaining<SubmitResponseRequestValidator>();
-            builder.Services.AddValidatorsFromAssemblyContaining<UpdatePollRequestValidator>();
-            builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserRequestValidator>();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            });
+           // .AddJwtBearer().
             builder.Services.AddScoped<IPollRepository, PollRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             var app = builder.Build();

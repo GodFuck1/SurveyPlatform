@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SurveyPlatform.Core.Entities
+namespace SurveyPlatform.DAL.Entities
 {
     public class User
     {
@@ -12,7 +12,7 @@ namespace SurveyPlatform.Core.Entities
         public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public List<PollResponse> Responses { get; set; }
-        public List<Poll> Polls { get; set; }
+        public ICollection<PollResponse> Responses { get; set; }
+        public ICollection<Poll> Polls { get; set; }
     }
 }

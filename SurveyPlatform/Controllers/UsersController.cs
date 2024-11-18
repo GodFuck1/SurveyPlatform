@@ -18,7 +18,7 @@ namespace SurveyPlatform.Controllers
         }
         
         [HttpPost("login")]
-        public IActionResult LogIn([FromBody] LoginRequest request)
+        public IActionResult LogIn([FromBody] LoginUserRequest request)
         {
             return Ok();
         }

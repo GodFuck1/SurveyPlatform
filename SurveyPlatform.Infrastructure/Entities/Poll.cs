@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SurveyPlatform.Core.Entities;
+namespace SurveyPlatform.DAL.Entities;
 
 public class Poll
 {
@@ -15,6 +15,6 @@ public class Poll
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public int AuthorID { get; set; }
     public User Author { get; set; }
-    public List<PollOption> Options { get; set; }
-    public List<PollResponse> Responses { get; set; }
+    public ICollection<PollOption> Options { get; set; }
+    public ICollection<PollResponse> Responses { get; set; }
 }

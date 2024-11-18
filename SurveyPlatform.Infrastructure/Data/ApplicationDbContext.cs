@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurveyPlatform.Core.Entities;
+using SurveyPlatform.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SurveyPlatform.Infrastructure.Data
+namespace SurveyPlatform.DAL.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -29,31 +29,36 @@ namespace SurveyPlatform.Infrastructure.Data
             modelBuilder.Entity<Poll>()
                 .HasMany(p => p.Options)
                 .WithOne(o => o.Poll)
-                .HasForeignKey(o => o.PollId);
+                .HasForeignKey(o => o.PollId)
+                .HasPrincipalKey(p => p.Id);
 
             // Настройка связи Poll - PollResponse (один ко многим)
             modelBuilder.Entity<Poll>()
                 .HasMany(p => p.Responses)
                 .WithOne(r => r.Poll)
-                .HasForeignKey(r => r.PollId);
+                .HasForeignKey(r => r.PollId)
+                .HasPrincipalKey(p => p.Id);
 
             // Настройка связи PollOption - PollResponse (один ко многим)
             modelBuilder.Entity<PollOption>()
                 .HasMany(o => o.Responses)
                 .WithOne(r => r.Option)
-                .HasForeignKey(r => r.OptionId);
+                .HasForeignKey(r => r.OptionId)
+                .HasPrincipalKey(p => p.Id);
 
             // Настройка связи User - PollResponse (один ко многим)
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Responses)
                 .WithOne(r => r.User)
-                .HasForeignKey(r => r.UserId);
+                .HasForeignKey(r => r.UserId)
+                .HasPrincipalKey(p => p.Id);
 
             // Настройка связи Poll - User (Автор опроса)
             modelBuilder.Entity<Poll>()
                 .HasOne(p => p.Author)
                 .WithMany(u => u.Polls)
-                .HasForeignKey(p => p.AuthorID);
+                .HasForeignKey(p => p.AuthorID)
+                .HasPrincipalKey(p => p.Id);
 
 
 

@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurveyPlatform.Core.Entities;
-using SurveyPlatform.Core.Interfaces;
-using SurveyPlatform.Infrastructure.Data;
+using SurveyPlatform.DAL.Entities;
+using SurveyPlatform.DAL.Interfaces;
+using SurveyPlatform.DAL.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SurveyPlatform.Infrastructure.Repositories
+namespace SurveyPlatform.DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {

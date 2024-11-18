@@ -4,16 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SurveyPlatform.Core.Entities
+namespace SurveyPlatform.DAL.Entities
 {
-    public class PollResponse
+    public class PollOption
     {
         public int Id { get; set; }
+        public string Content { get; set; }
         public int PollId { get; set; }
         public Poll Poll { get; set; }
-        public int OptionId { get; set; }
-        public PollOption Option { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public ICollection<PollResponse> Responses { get; set; } // Добавлено
     }
 }
