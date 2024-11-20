@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SurveyPlatform.Models.Responses
+namespace SurveyPlatform.DTOs.Responses
 {
     public class PollResponse
     {

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using SurveyPlatform.Models.Requests;
+using SurveyPlatform.DTOs.Requests;
 
-namespace SurveyPlatform.API.Models.Requests.Validators
+namespace SurveyPlatform.DTOs.Requests.Validators
 {
     public class LoginUserRequestValidator : AbstractValidator<LoginUserRequest>
     {
@@ -14,7 +14,7 @@ namespace SurveyPlatform.API.Models.Requests.Validators
                 .NotEmpty().WithMessage("Пароль обязателен для заполнения.")
                 .MinimumLength(8).WithMessage("Минимум 8 символов в пароле.")
                 .MaximumLength(32).WithMessage("Максимум 32 символа в пароле.");
-                
+
         }
     }
 }

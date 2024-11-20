@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SurveyPlatform.Models.Requests
+﻿namespace SurveyPlatform.DTOs.Requests
 {
     public class CreatePollRequest
     {

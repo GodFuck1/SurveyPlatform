@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using SurveyPlatform.Models.Requests;
+using SurveyPlatform.DTOs.Requests;
 
-namespace SurveyPlatform.API.Models.Requests.Validators
+namespace SurveyPlatform.DTOs.Requests.Validators
 {
     public class SubmitResponseRequestValidator : AbstractValidator<SubmitResponseRequest>
     {

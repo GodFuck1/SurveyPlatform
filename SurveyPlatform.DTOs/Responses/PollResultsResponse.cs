@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace SurveyPlatform.Models.Responses
+﻿namespace SurveyPlatform.DTOs.Responses
 {
     public class PollResultsResponse
     {
