@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SurveyPlatform.Infrastructure.Data;
+using SurveyPlatform.DAL.Data;
 
 #nullable disable
 
-namespace SurveyPlatform.Infrastructure.Migrations
+namespace SurveyPlatform.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace SurveyPlatform.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.Poll", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.Poll", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -74,7 +74,7 @@ namespace SurveyPlatform.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.PollOption", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollOption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,7 +128,7 @@ namespace SurveyPlatform.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.PollResponse", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollResponse", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -156,7 +156,7 @@ namespace SurveyPlatform.Infrastructure.Migrations
                     b.ToTable("PollResponses");
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.User", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,9 +197,9 @@ namespace SurveyPlatform.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.Poll", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.Poll", b =>
                 {
-                    b.HasOne("SurveyPlatform.Core.Entities.User", "Author")
+                    b.HasOne("SurveyPlatform.DAL.Entities.User", "Author")
                         .WithMany("Polls")
                         .HasForeignKey("AuthorID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -208,9 +208,9 @@ namespace SurveyPlatform.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.PollOption", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollOption", b =>
                 {
-                    b.HasOne("SurveyPlatform.Core.Entities.Poll", "Poll")
+                    b.HasOne("SurveyPlatform.DAL.Entities.Poll", "Poll")
                         .WithMany("Options")
                         .HasForeignKey("PollId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -219,21 +219,21 @@ namespace SurveyPlatform.Infrastructure.Migrations
                     b.Navigation("Poll");
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.PollResponse", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollResponse", b =>
                 {
-                    b.HasOne("SurveyPlatform.Core.Entities.PollOption", "Option")
+                    b.HasOne("SurveyPlatform.DAL.Entities.PollOption", "Option")
                         .WithMany("Responses")
                         .HasForeignKey("OptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SurveyPlatform.Core.Entities.Poll", "Poll")
+                    b.HasOne("SurveyPlatform.DAL.Entities.Poll", "Poll")
                         .WithMany("Responses")
                         .HasForeignKey("PollId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SurveyPlatform.Core.Entities.User", "User")
+                    b.HasOne("SurveyPlatform.DAL.Entities.User", "User")
                         .WithMany("Responses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -246,19 +246,19 @@ namespace SurveyPlatform.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.Poll", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.Poll", b =>
                 {
                     b.Navigation("Options");
 
                     b.Navigation("Responses");
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.PollOption", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollOption", b =>
                 {
                     b.Navigation("Responses");
                 });
 
-            modelBuilder.Entity("SurveyPlatform.Core.Entities.User", b =>
+            modelBuilder.Entity("SurveyPlatform.DAL.Entities.User", b =>
                 {
                     b.Navigation("Polls");
 

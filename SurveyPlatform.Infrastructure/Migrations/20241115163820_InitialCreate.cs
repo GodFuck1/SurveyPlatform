@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace SurveyPlatform.Infrastructure.Migrations
+namespace SurveyPlatform.DAL.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

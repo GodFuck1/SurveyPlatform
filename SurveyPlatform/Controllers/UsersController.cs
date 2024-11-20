@@ -1,24 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using SurveyPlatform.Models.Requests;
-using SurveyPlatform.Models.Responses;
+using SurveyPlatform.DTOs.Requests;
+using SurveyPlatform.DTOs.Responses;
 
 namespace SurveyPlatform.Controllers
 {
     [Route("api/users")]
+    [Authorize]
     [ApiController]
     public class UsersController : Controller
     {
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult<Guid> Register([FromBody] RegisterUserRequest request)
         {
             var addedUserId = Guid.NewGuid();
             return Ok(addedUserId);
         }
-        
+
+        [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult LogIn([FromBody] LoginRequest request)
+        public IActionResult LogIn([FromBody] LoginUserRequest request)
         {
             return Ok();
         }

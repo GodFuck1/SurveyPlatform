@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurveyPlatform.Core.Entities;
-using SurveyPlatform.Core.Interfaces;
-using SurveyPlatform.Infrastructure.Data;
+using SurveyPlatform.DAL.Entities;
+using SurveyPlatform.DAL.Interfaces;
+using SurveyPlatform.DAL.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SurveyPlatform.Infrastructure.Repositories
+namespace SurveyPlatform.DAL.Repositories
 {
     public class PollRepository : IPollRepository
     {
@@ -29,10 +29,10 @@ namespace SurveyPlatform.Infrastructure.Repositories
             return _context.Polls.Include(p => p.Options).ToList();
         }
 
-        public void CreatePoll(Poll poll)
+        public async void CreatePoll(Poll poll)
         {
             _context.Polls.Add(poll);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public async void UpdatePoll(Poll poll)

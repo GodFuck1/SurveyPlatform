@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using SurveyPlatform.Models.Requests;
-using SurveyPlatform.Models.Responses;
+using SurveyPlatform.DTOs.Requests;
+using SurveyPlatform.DTOs.Responses;
 
 
 namespace SurveyPlatform.Controllers
 {
     [Route("api/polls")]
+    [Authorize]
     [ApiController]
     public class PollsController : ControllerBase
     {
