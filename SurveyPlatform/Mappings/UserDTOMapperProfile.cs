@@ -8,11 +8,11 @@ namespace SurveyPlatform.Business.Mappings
 {
     public class UserDTOMapperProfile : Profile
     {
-        public UserDTOMapperProfile() 
+        public UserDTOMapperProfile()
         {
-            CreateMap<User, UserResponse>();
-            CreateMap<RegisterUserRequest, UserModel>();
-            CreateMap<LoginUserRequest, UserModel>();
+            CreateMap<UserModel, UserResponse>();
+            CreateMap<RegisterUserRequest, UserRegisterModel>();
+            CreateMap<LoginUserRequest, UserLoginModel>();
         }
     }
 }

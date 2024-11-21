@@ -6,9 +6,10 @@ namespace SurveyPlatform.Business.Mappings
 {
     public class UserMapperProfile : Profile
     {
-        public UserMapperProfile() 
+        public UserMapperProfile()
         {
-            CreateMap<UserModel, User>();
+            CreateMap<UserRegisterModel, User>();
+            CreateMap<User, UserModel>();
         }
     }
 }

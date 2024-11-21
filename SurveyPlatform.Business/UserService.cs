@@ -28,11 +28,11 @@ namespace SurveyPlatform.Business
         public IEnumerable<UserModel> GetAllUsers()
         {
             var users = _userRepository.GetAllUsers();
-            var usersResponses = _mapper.Map<IEnumerable<UserModel>>(users);
+            var usersResponses = _mapper.Map<IList<UserModel>>(users);
             return usersResponses;
         }
 
-        public async Task<UserModel> RegisterUserAsync(UserModel userModel)
+        public async Task<UserModel> RegisterUserAsync(UserRegisterModel userModel)
         {
             var existUser = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == userModel.Email);
             if (existUser != null) return null;
@@ -43,7 +43,7 @@ namespace SurveyPlatform.Business
             return userResponse;
         }
 
-        public async Task<string> LoginUserAsync(UserModel userModel)
+        public async Task<string> LoginUserAsync(UserLoginModel userModel)
         {
             var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == userModel.Email);
             if (user == null || !VerifyPassword(userModel.Password, user.Password))

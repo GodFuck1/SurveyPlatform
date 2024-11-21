@@ -20,13 +20,11 @@ namespace SurveyPlatform.Controllers
     {
         private readonly UserService _userService;
         private readonly IMapper _mapper;
-        private readonly IValidationContext _validation;
 
-        public UsersController(UserService userService,IMapper Mapper,IValidationContext validationContext)
+        public UsersController(UserService userService,IMapper Mapper)
         {
             _userService = userService;
             _mapper = Mapper;
-            _validation = validationContext;
         }
 
         [AllowAnonymous]
@@ -41,7 +39,7 @@ namespace SurveyPlatform.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var newUserData = _mapper.Map<RegisterUserRequest, UserModel>(request);
+            var newUserData = _mapper.Map<RegisterUserRequest, UserRegisterModel>(request);
             var userResponse = await _userService.RegisterUserAsync(newUserData);
             if (userResponse != null) return Ok(userResponse);
             else return Conflict("Email already has in DB");
@@ -58,7 +56,7 @@ namespace SurveyPlatform.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var userModel = _mapper.Map<LoginUserRequest, UserModel>(request);
+            var userModel = _mapper.Map<LoginUserRequest, UserLoginModel>(request);
             var loginResponse = await _userService.LoginUserAsync(userModel);
             if (loginResponse == string.Empty) return Unauthorized("Email Or Password Is Incorrect");
             return Ok(loginResponse);
@@ -68,6 +66,7 @@ namespace SurveyPlatform.Controllers
         public ActionResult<List<UserResponse>> GetUsers()
         {
             var users = _userService.GetAllUsers();
+            var allUsers = _mapper.Map<List<UserResponse>>(users);
             return Ok(users);
         }
 
