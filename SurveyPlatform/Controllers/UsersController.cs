@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using SurveyPlatform.API.DTOs.Requests;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.Business;
-using SurveyPlatform.DTOs.Requests;
 using SurveyPlatform.DTOs.Requests.Validators;
 using SurveyPlatform.DTOs.Responses;
 
@@ -71,9 +67,11 @@ namespace SurveyPlatform.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUserByID([FromRoute] Guid id)
+        public ActionResult<UserResponse> GetUserByID([FromRoute] int id)
         {
-            return Ok();
+            var users = _userService.GetUserByIdAsync(id);
+            var allUsers = _mapper.Map<UserResponse>(users);
+            return Ok(users);
         }
 
         [HttpPut("{id}")]
