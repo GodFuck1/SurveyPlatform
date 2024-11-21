@@ -16,11 +16,13 @@ namespace SurveyPlatform.Business
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly TokenService _tokenService;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, TokenService tokenService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _tokenService = tokenService;
         }
 
         public async Task<User> GetUserByIdAsync(int id)
@@ -42,15 +44,18 @@ namespace SurveyPlatform.Business
             return userResponse;
         }
 
-        public async Task<LoginResponse> RegisterUserAsync(RegisterUserRequest userRequest)
+        public async Task<LoginResponse> LoginUserAsync(LoginUserRequest loginRequest)
         {
-            userRequest.Password = HashPassword(userRequest.Password);
-            var user = _mapper.Map<User>(userRequest);
-            var createdUser = await _userRepository.CreateUser(user);
-            var userResponse = _mapper.Map<UserResponse>(createdUser);
-            return userResponse;
-        }
+            var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == loginRequest.Email);
+            if (user == null || !VerifyPassword(loginRequest.Password, user.Password))
+            {
+                return new LoginResponse { Success = false, Message = "Invalid email or password" };
+            }
 
+            var token = _tokenService.GenerateToken(user); // Пример токена
+
+            return new LoginResponse { Success = true, Token = token };
+        }
         public async Task UpdateUserAsync(User user)
         {
             _userRepository.UpdateUser(user);
@@ -73,6 +78,11 @@ namespace SurveyPlatform.Business
                 }
                 return builder.ToString();
             }
+        }
+        private bool VerifyPassword(string inputPassword, string hashedPassword)
+        {
+            var hashedInputPassword = HashPassword(inputPassword);
+            return hashedInputPassword == hashedPassword;
         }
     }
 }
