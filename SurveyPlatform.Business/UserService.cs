@@ -1,9 +1,12 @@
-﻿using SurveyPlatform.DAL.Entities;
+﻿using AutoMapper;
+using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
 using SurveyPlatform.DTOs.Requests;
+using SurveyPlatform.DTOs.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,10 +15,12 @@ namespace SurveyPlatform.Business
     public class UserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<User> GetUserByIdAsync(int id)
@@ -28,10 +33,22 @@ namespace SurveyPlatform.Business
             return _userRepository.GetAllUsers();
         }
 
-        public async Task CreateUserAsync(RegisterUserRequest user)
+        public async Task<UserResponse> RegisterUserAsync(RegisterUserRequest userRequest)
         {
+            userRequest.Password = HashPassword(userRequest.Password);
+            var user = _mapper.Map<User>(userRequest);
+            var createdUser = await _userRepository.CreateUser(user);
+            var userResponse = _mapper.Map<UserResponse>(createdUser);
+            return userResponse;
+        }
 
-            //_userRepository.CreateUser(user);
+        public async Task<LoginResponse> RegisterUserAsync(RegisterUserRequest userRequest)
+        {
+            userRequest.Password = HashPassword(userRequest.Password);
+            var user = _mapper.Map<User>(userRequest);
+            var createdUser = await _userRepository.CreateUser(user);
+            var userResponse = _mapper.Map<UserResponse>(createdUser);
+            return userResponse;
         }
 
         public async Task UpdateUserAsync(User user)
@@ -42,6 +59,20 @@ namespace SurveyPlatform.Business
         public async Task DeleteUserAsync(int id)
         {
             _userRepository.DeleteUser(id);
+        }
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
     }
 }

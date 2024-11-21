@@ -10,6 +10,8 @@ using SurveyPlatform.DAL.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SurveyPlatform.Business.Mappings;
+using SurveyPlatform.Business;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace SurveyPlatform
 {
@@ -52,6 +54,9 @@ namespace SurveyPlatform
 
             builder.Services.AddScoped<IPollRepository, PollRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<UserService>();
+            builder.Services.AddSingleton<TokenService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

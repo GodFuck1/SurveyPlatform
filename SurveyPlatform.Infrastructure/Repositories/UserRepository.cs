@@ -18,10 +18,11 @@ namespace SurveyPlatform.DAL.Repositories
             _context = context;
         }
 
-        public async void CreateUser(User user)
+        public async Task<User> CreateUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            return await GetUserById(user.Id);
         }
 
         public async void DeleteUser(int id)

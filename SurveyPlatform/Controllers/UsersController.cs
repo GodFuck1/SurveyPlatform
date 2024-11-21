@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using SurveyPlatform.Business;
 using SurveyPlatform.DTOs.Requests;
 using SurveyPlatform.DTOs.Responses;
 
@@ -12,17 +13,24 @@ namespace SurveyPlatform.Controllers
     [ApiController]
     public class UsersController : Controller
     {
+        private readonly UserService _userService;
+
+        public UsersController(UserService userService)
+        {
+            _userService = userService;
+        }
+
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<Guid> Register([FromBody] RegisterUserRequest request)
+        public async Task<ActionResult<UserResponse>> Register([FromBody] RegisterUserRequest request)
         {
-            var addedUserId = Guid.NewGuid();
-            return Ok(addedUserId);
+            var userResponse = await _userService.RegisterUserAsync(request);
+            return Ok(userResponse);
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult LogIn([FromBody] LoginUserRequest request)
+        public IActionResult Login([FromBody] LoginUserRequest request)
         {
             return Ok();
         }
