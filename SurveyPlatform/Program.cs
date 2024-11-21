@@ -49,8 +49,9 @@ namespace SurveyPlatform
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(key)
             });
-
+            
             builder.Services.AddAutoMapper(typeof(UserMapperProfile));
+            builder.Services.AddAutoMapper(typeof(UserDTOMapperProfile));
 
             builder.Services.AddScoped<IPollRepository, PollRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();

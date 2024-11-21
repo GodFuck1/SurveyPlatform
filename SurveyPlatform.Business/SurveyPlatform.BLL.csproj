@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SurveyPlatform.DTOs\SurveyPlatform.DTOs.csproj" />
     <ProjectReference Include="..\SurveyPlatform.Infrastructure\SurveyPlatform.DAL.csproj" />
   </ItemGroup>
 

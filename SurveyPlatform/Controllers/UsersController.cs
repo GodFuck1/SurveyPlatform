@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SurveyPlatform.API.DTOs.Requests;
+using SurveyPlatform.BLL.Models;
 using SurveyPlatform.Business;
-using SurveyPlatform.DTOs.Requests;
+using SurveyPlatform.DTOs.Requests.Validators;
 using SurveyPlatform.DTOs.Responses;
 
 namespace SurveyPlatform.Controllers
@@ -14,29 +15,46 @@ namespace SurveyPlatform.Controllers
     public class UsersController : Controller
     {
         private readonly UserService _userService;
+        private readonly IMapper _mapper;
 
-        public UsersController(UserService userService)
+        public UsersController(UserService userService,IMapper Mapper)
         {
             _userService = userService;
+            _mapper = Mapper;
         }
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UserResponse>> Register([FromBody] RegisterUserRequest request)
         {
-            var userResponse = await _userService.RegisterUserAsync(request);
-            return Ok(userResponse);
+            var validator = new RegisterUserRequestValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+            var newUserData = _mapper.Map<RegisterUserRequest, UserRegisterModel>(request);
+            var userResponse = await _userService.RegisterUserAsync(newUserData);
+            if (userResponse != null) return Ok(userResponse);
+            else return Conflict("Email already has in DB");
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginUserRequest request)
+        public async Task<ActionResult<string>> Login([FromBody] LoginUserRequest request)
         {
-            var loginResponse = await _userService.LoginUserAsync(request);
-            if (!loginResponse.Success)
+            var validator = new LoginUserRequestValidator();
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
             {
-                return Unauthorized(loginResponse.Message);
+                return BadRequest(validationResult.Errors);
             }
+
+            var userModel = _mapper.Map<LoginUserRequest, UserLoginModel>(request);
+            var loginResponse = await _userService.LoginUserAsync(userModel);
+            if (loginResponse == string.Empty) return Unauthorized("Email Or Password Is Incorrect");
             return Ok(loginResponse);
         }
 
@@ -44,13 +62,16 @@ namespace SurveyPlatform.Controllers
         public ActionResult<List<UserResponse>> GetUsers()
         {
             var users = _userService.GetAllUsers();
+            var allUsers = _mapper.Map<List<UserResponse>>(users);
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUserByID([FromRoute] Guid id)
+        public ActionResult<UserResponse> GetUserByID([FromRoute] int id)
         {
-            return Ok();
+            var users = _userService.GetUserByIdAsync(id);
+            var allUsers = _mapper.Map<UserResponse>(users);
+            return Ok(users);
         }
 
         [HttpPut("{id}")]
