@@ -2,7 +2,7 @@
 
 namespace SurveyPlatform.DTOs.Responses
 {
-    public class PollResponse
+    public class PollDataResponse
     {
         public int Id { get; set; }
         public string Title { get; set; }
