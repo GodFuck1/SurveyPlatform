@@ -26,7 +26,7 @@ namespace SurveyPlatform.Business
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = (ClaimsIdentity)GetClaims(user),
+                Subject = new ClaimsIdentity(GetClaims(user)),
                 Expires = DateTime.UtcNow.AddHours(1),
                 Issuer = _configuration["Jwt:Issuer"],
                 Audience = _configuration["Jwt:Audience"],
