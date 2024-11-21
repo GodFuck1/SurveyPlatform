@@ -43,7 +43,8 @@ namespace SurveyPlatform.Controllers
         [HttpGet]
         public ActionResult<List<UserResponse>> GetUsers()
         {
-            return Ok();
+            var users = _userService.GetAllUsers();
+            return Ok(users);
         }
 
         [HttpGet("{id}")]

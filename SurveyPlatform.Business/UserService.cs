@@ -30,9 +30,12 @@ namespace SurveyPlatform.Business
             return await _userRepository.GetUserById(id);
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public IEnumerable<UserResponse> GetAllUsers()
         {
-            return _userRepository.GetAllUsers();
+            var users = _userRepository.GetAllUsers();
+            var usersResponses = _mapper.Map<IEnumerable<UserResponse>>(users);
+            return usersResponses;
+
         }
 
         public async Task<UserResponse> RegisterUserAsync(RegisterUserRequest userRequest)
