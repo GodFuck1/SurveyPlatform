@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using SurveyPlatform.API.DTOs.Requests;
 using SurveyPlatform.DTOs.Requests;
 using SurveyPlatform.DTOs.Responses;
 

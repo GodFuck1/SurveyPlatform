@@ -30,8 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SurveyPlatform.Business\SurveyPlatform.BLL.csproj" />
-    <ProjectReference Include="..\SurveyPlatform.DTOs\SurveyPlatform.DTOs.csproj" />
-    <ProjectReference Include="..\SurveyPlatform.Infrastructure\SurveyPlatform.DAL.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,6 @@
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
-using SurveyPlatform.DTOs.Responses;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -26,20 +25,21 @@ namespace SurveyPlatform.Business
             return await _userRepository.GetUserById(id);
         }
 
-        public IEnumerable<UserResponse> GetAllUsers()
+        public IEnumerable<UserModel> GetAllUsers()
         {
             var users = _userRepository.GetAllUsers();
-            var usersResponses = _mapper.Map<IEnumerable<UserResponse>>(users);
+            var usersResponses = _mapper.Map<IEnumerable<UserModel>>(users);
             return usersResponses;
-
         }
 
-        public async Task<UserResponse> RegisterUserAsync(UserModel userModel)
+        public async Task<UserModel> RegisterUserAsync(UserModel userModel)
         {
+            var existUser = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == userModel.Email);
+            if (existUser != null) return null;
             userModel.Password = HashPassword(userModel.Password);
             var user = _mapper.Map<User>(userModel);
             var createdUser = await _userRepository.CreateUser(user);
-            var userResponse = _mapper.Map<UserResponse>(createdUser);
+            var userResponse = _mapper.Map<UserModel>(createdUser);
             return userResponse;
         }
 
