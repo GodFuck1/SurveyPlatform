@@ -30,9 +30,14 @@ namespace SurveyPlatform.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginUserRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginUserRequest request)
         {
-            return Ok();
+            var loginResponse = await _userService.LoginUserAsync(request);
+            if (!loginResponse.Success)
+            {
+                return Unauthorized(loginResponse.Message);
+            }
+            return Ok(loginResponse);
         }
 
         [HttpGet]
