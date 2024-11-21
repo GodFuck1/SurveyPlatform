@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
+using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
-using SurveyPlatform.DTOs.Requests;
 using SurveyPlatform.DTOs.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SurveyPlatform.Business
 {
@@ -38,26 +34,26 @@ namespace SurveyPlatform.Business
 
         }
 
-        public async Task<UserResponse> RegisterUserAsync(RegisterUserRequest userRequest)
+        public async Task<UserResponse> RegisterUserAsync(UserModel userModel)
         {
-            userRequest.Password = HashPassword(userRequest.Password);
-            var user = _mapper.Map<User>(userRequest);
+            userModel.Password = HashPassword(userModel.Password);
+            var user = _mapper.Map<User>(userModel);
             var createdUser = await _userRepository.CreateUser(user);
             var userResponse = _mapper.Map<UserResponse>(createdUser);
             return userResponse;
         }
 
-        public async Task<LoginResponse> LoginUserAsync(LoginUserRequest loginRequest)
+        public async Task<string> LoginUserAsync(UserModel userModel)
         {
-            var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == loginRequest.Email);
-            if (user == null || !VerifyPassword(loginRequest.Password, user.Password))
+            var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == userModel.Email);
+            if (user == null || !VerifyPassword(userModel.Password, user.Password))
             {
-                return new LoginResponse { Success = false, Message = "Invalid email or password" };
+                return string.Empty;
             }
 
-            var token = _tokenService.GenerateToken(user); // Пример токена
+            var token = _tokenService.GenerateToken(user);
 
-            return new LoginResponse { Success = true, Token = token };
+            return token;
         }
         public async Task UpdateUserAsync(User user)
         {

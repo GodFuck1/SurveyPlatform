@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using SurveyPlatform.BLL.Models;
 
 namespace SurveyPlatform.Business.Mappings
 {
@@ -15,7 +16,8 @@ namespace SurveyPlatform.Business.Mappings
         public UserMapperProfile() 
         {
             CreateMap<User, UserResponse>();
-            CreateMap<RegisterUserRequest, User>();
+            CreateMap<RegisterUserRequest, UserModel>();
+            CreateMap<LoginUserRequest, UserModel>();
         }
     }
 }
