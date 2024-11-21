@@ -11,7 +11,7 @@ namespace SurveyPlatform.DAL.Interfaces
     {
         Task<User> GetUserById(int id);
         IEnumerable<User> GetAllUsers();
-        void CreateUser(User user);
+        Task<User> CreateUser(User user);
         void UpdateUser(User user);
         void DeleteUser(int id);
     }

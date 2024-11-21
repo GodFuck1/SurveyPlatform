@@ -9,14 +9,16 @@ namespace SurveyPlatform.DTOs.Requests.Validators
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Имя обязательно для заполнения.")
-                .MinimumLength(2).WithMessage("Длина имени должна быть больше 2х символов.");
+                .MinimumLength(2).WithMessage("Длина имени должна быть больше 2 символов.");
 
             RuleFor(x => x.Email)
-                .EmailAddress().WithMessage("Почта указана не верно.");
+                .NotEmpty().WithMessage("Почта обязательна для заполнения.")
+                .EmailAddress().WithMessage("Почта указана неверно.");
+
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Пароль обязателен для заполнения.")
-                .MinimumLength(8).WithMessage("Минимальная длина пароля - 8 символов")
-                .MaximumLength(32).WithMessage("Минимальная длина пароля - 8 символов");
+                .MinimumLength(8).WithMessage("Минимальная длина пароля - 8 символов.")
+                .MaximumLength(32).WithMessage("Максимальная длина пароля - 32 символа.");
         }
     }
 }

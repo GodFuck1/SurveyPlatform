@@ -60,27 +60,14 @@ namespace SurveyPlatform.DAL.Data
                 .HasForeignKey(p => p.AuthorID)
                 .HasPrincipalKey(p => p.Id);
 
-
-
-            // Добавление начальных данных
-            modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Name = "Admin", Email = "admin@example.com", Password = "admin123" },
-                new User { Id = 2, Name = "NeAdmin", Email = "ne_admin@example.com", Password = "tochno_ne_admin123" }
-
-            );
-
-            modelBuilder.Entity<Poll>().HasData(
-                new Poll { Id = 1, Title = "Любимый язык программирования", Description = "Проголосуй за лучший язык программирования.", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow, AuthorID = 1 },
-                new Poll { Id = 2, Title = "Президент США", Description = "Кто станет президентом США в 2028.", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow, AuthorID = 2 }
-            );
-
-            modelBuilder.Entity<PollOption>().HasData(
-                new PollOption { Id = 1, Content = "C#", PollId = 1 },
-                new PollOption { Id = 2, Content = "Java", PollId = 1 },
-                new PollOption { Id = 3, Content = "Python", PollId = 1 },
-                new PollOption { Id = 4, Content = "Трамп(наш слон)", PollId = 2 },
-                new PollOption { Id = 5, Content = "Харрис(не наш слон)", PollId = 2 }
-            );
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired();
+                entity.Property(e => e.Email).IsRequired();
+                entity.Property(e => e.Password).IsRequired();
+                entity.Property(e => e.Roles).HasDefaultValue(new List<string> { "User" });
+            });
         }
     }
 }

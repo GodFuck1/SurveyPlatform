@@ -17,7 +17,7 @@ namespace SurveyPlatform.Controllers
         /// </summary>
         /// <returns>Список опросов</returns>
         [HttpGet]
-        public ActionResult<List<PollResponse>> GetPolls()
+        public ActionResult<List<PollDataResponse>> GetPolls()
         {
             return Ok();
         }
@@ -28,9 +28,9 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Опрос</returns>
         [HttpGet("{id}")]
-        public ActionResult<PollResponse> GetPollById(int id)
+        public ActionResult<PollDataResponse> GetPollById(int id)
         {
-            var new_pool = new PollResponse
+            var new_pool = new PollDataResponse
             {
                 Id = id,
                 Title = "test",
@@ -96,14 +96,14 @@ namespace SurveyPlatform.Controllers
         /// <param name="pollRequest"></param>
         /// <returns>Новый опрос</returns>
         [HttpPost]
-        public ActionResult<PollResponse> CreatePoll([FromForm] CreatePollRequest pollRequest)
+        public ActionResult<PollDataResponse> CreatePoll([FromForm] CreatePollRequest pollRequest)
         {
             if (pollRequest.Options.Count < 2)
             {
                 return BadRequest();
             }
 
-            var new_pool = new PollResponse
+            var new_pool = new PollDataResponse
             {
                 Id = new Random().Next(10,100),
                 Title = "test",
@@ -125,9 +125,9 @@ namespace SurveyPlatform.Controllers
         /// <param name="updatePollRequest">Тело запроса с новыми Title & Description</param>
         /// <returns>Обновлённый опрос</returns>
         [HttpPut("{id}")]
-        public ActionResult<PollResponse> UpdatePoll(int id,[FromForm] UpdatePollRequest updatePollRequest)
+        public ActionResult<PollDataResponse> UpdatePoll(int id,[FromForm] UpdatePollRequest updatePollRequest)
         {
-            var new_pool = new PollResponse
+            var new_pool = new PollDataResponse
             {
                 Id = id,
                 Title = updatePollRequest.Title,
