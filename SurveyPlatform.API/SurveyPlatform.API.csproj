@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SurveyPlatform.Business\SurveyPlatform.BLL.csproj" />
+    <ProjectReference Include="..\SurveyPlatform.BLL\SurveyPlatform.BLL.csproj" />
   </ItemGroup>
 
 </Project>
