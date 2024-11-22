@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurveyPlatform.API", "SurveyPlatform\SurveyPlatform.API.csproj", "{31416474-FE47-4227-98B2-90F111559C7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurveyPlatform.API", "SurveyPlatform.API\SurveyPlatform.API.csproj", "{31416474-FE47-4227-98B2-90F111559C7E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurveyPlatform.DAL", "SurveyPlatform.Infrastructure\SurveyPlatform.DAL.csproj", "{059B915D-2D27-4088-BA11-8043CAC3A9BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurveyPlatform.DAL", "SurveyPlatform.DAL\SurveyPlatform.DAL.csproj", "{059B915D-2D27-4088-BA11-8043CAC3A9BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyPlatform.BLL", "SurveyPlatform.Business\SurveyPlatform.BLL.csproj", "{85688E8D-461B-4F47-B3F3-6E2E523B54E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyPlatform.BLL", "SurveyPlatform.BLL\SurveyPlatform.BLL.csproj", "{85688E8D-461B-4F47-B3F3-6E2E523B54E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
