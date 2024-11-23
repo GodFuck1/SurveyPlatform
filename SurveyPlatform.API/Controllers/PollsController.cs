@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SurveyPlatform.API.DTOs.Requests;
+using SurveyPlatform.Business;
+using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DTOs.Requests;
 using SurveyPlatform.DTOs.Responses;
 
@@ -13,14 +15,21 @@ namespace SurveyPlatform.Controllers
     [ApiController]
     public class PollsController : ControllerBase
     {
+        private readonly PollService _pollService;
+
+        public PollsController(PollService pollService)
+        {
+            _pollService = pollService;
+        }
         /// <summary>
         /// Получение списка опросов (без результатов)
         /// </summary>
         /// <returns>Список опросов</returns>
         [HttpGet]
-        public ActionResult<List<PollDataResponse>> GetPolls()
+        public async Task<ActionResult<List<PollDataResponse>>> GetPolls()
         {
-            return Ok();
+            var pollsData = await _pollService.GetAllPolls();
+            return Ok(pollsData);
         }
 
         /// <summary>
@@ -29,22 +38,10 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Опрос</returns>
         [HttpGet("{id}")]
-        public ActionResult<PollDataResponse> GetPollById(int id)
+        public async Task<ActionResult<PollDataResponse>> GetPollById(int id)
         {
-            var new_pool = new PollDataResponse
-            {
-                Id = id,
-                Title = "test",
-                Description = "test-description",
-                CreatedIn = DateTime.Now,
-                AuthorID = 1999,
-                Options = new List<OptionResponse>
-                {
-                    new OptionResponse { Id = 1, Content = "otvet 1" },
-                    new OptionResponse { Id = 2, Content = "otvet 2" }
-                }
-            };
-            return new_pool;
+            var pollData = await _pollService.GetPollById(id);
+            return Ok(pollData);
         }
 
         /// <summary>
@@ -55,17 +52,8 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}/results")]
         public IActionResult GetPollResults(int id)
         {
-            var pollResultsResponse = new PollResultsResponse
-            {
-                PollId = id,
-                Title = "test",
-                Options = new List<OptionResult>
-                {
-                    new OptionResult { OptionId = 1, Content = "otvet 1", ResponseCount = 10 },
-                    new OptionResult { OptionId = 2, Content = "otvet 2", ResponseCount = 20 }
-                }
-            };
-            return Ok(pollResultsResponse);
+            var pollResults = _pollService.GetResponsesByPollId(id);
+            return Ok(pollResults);
         }
 
         /// <summary>
@@ -75,20 +63,10 @@ namespace SurveyPlatform.Controllers
         /// <param name="submitResponseRequest">Тело запроса ID ответа и ID пользователя</param>
         /// <returns>Результаты опроса после ответа</returns>
         [HttpPost("{id}/submit-response")]
-        public ActionResult<PollResultsResponse> SubmitResponse(int id,[FromForm] SubmitResponseRequest submitResponseRequest)
+        public async Task<ActionResult<PollResultsResponse>> SubmitResponse(int id,[FromForm] SubmitResponseRequest submitResponseRequest)
         {
-            //return Ok(submitResponseRequest);
-            var pollResultsResponse = new PollResultsResponse
-            {
-                PollId = id,
-                Title = "test",
-                Options = new List<OptionResult>
-                {
-                    new OptionResult { OptionId = 1, Content = "otvet 1", ResponseCount = 10 },
-                    new OptionResult { OptionId = 2, Content = "otvet 2", ResponseCount = 20 }
-                }
-            };
-            return Ok(pollResultsResponse);
+            await _pollService.AddPollResponse(null);
+            return Ok();
         }
 
         /// <summary>
@@ -97,25 +75,10 @@ namespace SurveyPlatform.Controllers
         /// <param name="pollRequest"></param>
         /// <returns>Новый опрос</returns>
         [HttpPost]
-        public ActionResult<PollDataResponse> CreatePoll([FromForm] CreatePollRequest pollRequest)
+        public async Task<ActionResult<PollDataResponse>> CreatePoll([FromForm] CreatePollRequest pollRequest)
         {
-            if (pollRequest.Options.Count < 2)
-            {
-                return BadRequest();
-            }
-
-            var new_pool = new PollDataResponse
-            {
-                Id = new Random().Next(10,100),
-                Title = "test",
-                Description = "test-description",
-                CreatedIn = DateTime.Now,
-                AuthorID = 1999,
-                Options = new List<OptionResponse>()
-            };
-              foreach (var option in pollRequest.Options)
-                new_pool.Options.Add(new OptionResponse { Id = new Random().Next(10, 100), Content = option });
-            return Ok(new_pool);
+            await _pollService.CreatePoll(null);
+            return Ok();
         }
 
         
@@ -126,34 +89,22 @@ namespace SurveyPlatform.Controllers
         /// <param name="updatePollRequest">Тело запроса с новыми Title & Description</param>
         /// <returns>Обновлённый опрос</returns>
         [HttpPut("{id}")]
-        public ActionResult<PollDataResponse> UpdatePoll(int id,[FromForm] UpdatePollRequest updatePollRequest)
+        public async Task<ActionResult<PollDataResponse>> UpdatePoll(int id,[FromForm] UpdatePollRequest updatePollRequest)
         {
-            var new_pool = new PollDataResponse
-            {
-                Id = id,
-                Title = updatePollRequest.Title,
-                Description = updatePollRequest.Description,
-                CreatedIn = DateTime.Now,
-                AuthorID = 1999,
-                Options = new List<OptionResponse>
-                {
-                    new OptionResponse { Id = 1, Content = "otvet 1" },
-                    new OptionResponse { Id = 2, Content = "otvet 2" }
-                }
-            };
-            return new_pool;
+            await _pollService.UpdatePoll(null);
+            return Ok();
         }
 
         /// <summary>
         /// Удаление опроса
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>Статус 200 - удача / Статус 418 - неудачно</returns>
+        /// <returns>Статус 200 - удача</returns>
         [HttpDelete("{id}")]
-        public ActionResult DeletePoll(int id)
+        public async Task<ActionResult> DeletePoll(int id)
         {
-            return StatusCode(418);
-            return StatusCode(200);
+            await _pollService.DeletePoll(id);
+            return Ok();
         }
     }
 }
