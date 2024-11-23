@@ -8,7 +8,5 @@ namespace SurveyPlatform.DTOs.Responses
         public string Name { get; set; }
         public string Email { get; set; }
         public ICollection<string> Roles { get; set; }
-        public ICollection<PollResponse>? Responses { get; set; }
-        public ICollection<Poll>? Polls { get; set; }
     }
 }
