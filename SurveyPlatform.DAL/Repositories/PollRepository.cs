@@ -2,11 +2,6 @@
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
 using SurveyPlatform.DAL.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SurveyPlatform.DAL.Repositories
 {
@@ -24,18 +19,18 @@ namespace SurveyPlatform.DAL.Repositories
             return await _context.Polls.Include(p => p.Options).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public IEnumerable<Poll> GetAllPolls()
+        public async Task<IEnumerable<Poll>> GetAllPolls()
         {
-            return _context.Polls.Include(p => p.Options).ToList();
+            return (IEnumerable<Poll>)_context.Polls.Include(p => p.Options).ToListAsync();
         }
 
-        public async void CreatePoll(Poll poll)
+        public async Task CreatePoll(Poll poll)
         {
-            _context.Polls.Add(poll);
+            await _context.Polls.AddAsync(poll);
             await _context.SaveChangesAsync();
         }
 
-        public async void UpdatePoll(Poll poll)
+        public async Task UpdatePoll(Poll poll)
         {
             var existingPoll = await GetPollById(poll.Id);
             if (existingPoll != null)
@@ -47,7 +42,7 @@ namespace SurveyPlatform.DAL.Repositories
             }
         }
 
-        public async void DeletePoll(int id)
+        public async Task DeletePoll(int id)
         {
             var poll = await GetPollById(id);
             if (poll != null)
@@ -57,15 +52,15 @@ namespace SurveyPlatform.DAL.Repositories
             }
         }
 
-        public async void AddPollResponse(PollResponse response)
+        public async Task AddPollResponse(PollResponse response)
         {
             _context.PollResponses.Add(response);
             await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<PollResponse> GetResponsesByPollId(int pollId)
+        public async Task<IEnumerable<PollResponse>> GetResponsesByPollId(int pollId)
         {
-            return _context.PollResponses.Where(r => r.PollId == pollId).ToList();
+            return await _context.PollResponses.Where(r => r.PollId == pollId).ToListAsync();
         }
     }
 }
