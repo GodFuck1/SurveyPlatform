@@ -11,7 +11,7 @@ using SurveyPlatform.DTOs.Responses;
 namespace SurveyPlatform.Controllers
 {
     [Route("api/polls")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class PollsController : ControllerBase
     {
