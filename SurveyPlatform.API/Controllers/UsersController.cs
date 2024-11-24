@@ -63,15 +63,15 @@ namespace SurveyPlatform.Controllers
         {
             var users = _userService.GetAllUsers();
             var allUsers = _mapper.Map<List<UserResponse>>(users);
-            return Ok(users);
+            return Ok(allUsers);
         }
 
         [HttpGet("{id}")]
         public ActionResult<UserResponse> GetUserByID([FromRoute] Guid id)
         {
             var users = _userService.GetUserByIdAsync(id);
-            var allUsers = _mapper.Map<UserResponse>(users);
-            return Ok(users);
+            var userMapped = _mapper.Map<UserResponse>(users);
+            return Ok(userMapped);
         }
 
         [HttpPut("{id}")]
