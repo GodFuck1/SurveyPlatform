@@ -69,6 +69,12 @@ namespace SurveyPlatform.DAL.Data
                 entity.Property(e => e.Roles).HasDefaultValue(new List<string> { "User" });
                 entity.HasIndex(e => e.Email).IsUnique();
             });
+            modelBuilder.Entity<Poll>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired();
+                entity.Property(e => e.Description).IsRequired();
+            });
         }
     }
 }
