@@ -14,7 +14,7 @@ namespace SurveyPlatform.DAL.Repositories
             _context = context;
         }
 
-        public async Task<Poll> GetPollById(int id)
+        public async Task<Poll> GetPollById(Guid id)
         {
             return await _context.Polls.Include(p => p.Options).FirstOrDefaultAsync(p => p.Id == id);
         }
@@ -42,7 +42,7 @@ namespace SurveyPlatform.DAL.Repositories
             }
         }
 
-        public async Task DeletePoll(int id)
+        public async Task DeletePoll(Guid id)
         {
             var poll = await GetPollById(id);
             if (poll != null)
@@ -58,7 +58,7 @@ namespace SurveyPlatform.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<PollResponse>> GetResponsesByPollId(int pollId)
+        public async Task<IEnumerable<PollResponse>> GetResponsesByPollId(Guid pollId)
         {
             return await _context.PollResponses.Where(r => r.PollId == pollId).ToListAsync();
         }

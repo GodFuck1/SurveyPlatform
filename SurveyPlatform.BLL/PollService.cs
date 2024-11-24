@@ -17,7 +17,7 @@ namespace SurveyPlatform.Business
             _pollRepository = pollRepository;
         }
 
-        public async Task<Poll> GetPollById(int id)
+        public async Task<Poll> GetPollById(Guid id)
         {
             return await _pollRepository.GetPollById(id);
         }
@@ -37,7 +37,7 @@ namespace SurveyPlatform.Business
             await _pollRepository.UpdatePoll(poll);
         }
 
-        public async Task DeletePoll(int id)
+        public async Task DeletePoll(Guid id)
         {
             await _pollRepository.DeletePoll(id);
         }
@@ -47,7 +47,7 @@ namespace SurveyPlatform.Business
             await _pollRepository.AddPollResponse(response);
         }
 
-        public async Task<IEnumerable<PollResponse>> GetResponsesByPollId(int pollId)
+        public async Task<IEnumerable<PollResponse>> GetResponsesByPollId(Guid pollId)
         {
             return await _pollRepository.GetResponsesByPollId(pollId);
         }

@@ -55,6 +55,7 @@ namespace SurveyPlatform
 
             builder.Services.AddScoped<IPollRepository, PollRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<PollService>();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddSingleton<TokenService>();
 

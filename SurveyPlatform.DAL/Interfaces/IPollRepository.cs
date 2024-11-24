@@ -9,12 +9,12 @@ namespace SurveyPlatform.DAL.Interfaces
 {
     public interface IPollRepository
     {
-        Task<Poll> GetPollById(int id);
+        Task<Poll> GetPollById(Guid id);
         Task<IEnumerable<Poll>> GetAllPolls();
         Task CreatePoll(Poll poll);
         Task UpdatePoll(Poll poll);
-        Task DeletePoll(int id);
+        Task DeletePoll(Guid id);
         Task AddPollResponse(PollResponse response);
-        Task<IEnumerable<PollResponse>> GetResponsesByPollId(int pollId);
+        Task<IEnumerable<PollResponse>> GetResponsesByPollId(Guid pollId);
     }
 }

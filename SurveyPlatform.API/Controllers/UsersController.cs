@@ -67,7 +67,7 @@ namespace SurveyPlatform.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<UserResponse> GetUserByID([FromRoute] int id)
+        public ActionResult<UserResponse> GetUserByID([FromRoute] Guid id)
         {
             var users = _userService.GetUserByIdAsync(id);
             var allUsers = _mapper.Map<UserResponse>(users);

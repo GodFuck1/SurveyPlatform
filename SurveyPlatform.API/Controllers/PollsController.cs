@@ -38,7 +38,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Опрос</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<PollDataResponse>> GetPollById(int id)
+        public async Task<ActionResult<PollDataResponse>> GetPollById(Guid id)
         {
             var pollData = await _pollService.GetPollById(id);
             return Ok(pollData);
@@ -50,7 +50,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Результаты опроса</returns>
         [HttpGet("{id}/results")]
-        public IActionResult GetPollResults(int id)
+        public IActionResult GetPollResults(Guid id)
         {
             var pollResults = _pollService.GetResponsesByPollId(id);
             return Ok(pollResults);
@@ -63,7 +63,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="submitResponseRequest">Тело запроса ID ответа и ID пользователя</param>
         /// <returns>Результаты опроса после ответа</returns>
         [HttpPost("{id}/submit-response")]
-        public async Task<ActionResult<PollResultsResponse>> SubmitResponse(int id,[FromForm] SubmitResponseRequest submitResponseRequest)
+        public async Task<ActionResult<PollResultsResponse>> SubmitResponse(Guid id,[FromForm] SubmitResponseRequest submitResponseRequest)
         {
             await _pollService.AddPollResponse(null);
             return Ok();
@@ -89,7 +89,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="updatePollRequest">Тело запроса с новыми Title & Description</param>
         /// <returns>Обновлённый опрос</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult<PollDataResponse>> UpdatePoll(int id,[FromForm] UpdatePollRequest updatePollRequest)
+        public async Task<ActionResult<PollDataResponse>> UpdatePoll(Guid id,[FromForm] UpdatePollRequest updatePollRequest)
         {
             await _pollService.UpdatePoll(null);
             return Ok();
@@ -101,7 +101,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Статус 200 - удача</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeletePoll(int id)
+        public async Task<ActionResult> DeletePoll(Guid id)
         {
             await _pollService.DeletePoll(id);
             return Ok();
