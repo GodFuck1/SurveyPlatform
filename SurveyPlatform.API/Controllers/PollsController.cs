@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SurveyPlatform.API.DTOs.Requests;
-using SurveyPlatform.Business;
+using SurveyPlatform.BLL;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DTOs.Requests;
 using SurveyPlatform.DTOs.Responses;

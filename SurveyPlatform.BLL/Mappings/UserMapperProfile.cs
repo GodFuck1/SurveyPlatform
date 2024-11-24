@@ -2,7 +2,7 @@
 using AutoMapper;
 using SurveyPlatform.BLL.Models;
 
-namespace SurveyPlatform.Business.Mappings
+namespace SurveyPlatform.BLL.Mappings
 {
     public class UserMapperProfile : Profile
     {

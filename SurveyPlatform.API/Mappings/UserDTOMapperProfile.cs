@@ -4,7 +4,7 @@ using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DTOs.Responses;
 using SurveyPlatform.API.DTOs.Requests;
 
-namespace SurveyPlatform.Business.Mappings
+namespace SurveyPlatform.BLL.Mappings
 {
     public class UserDTOMapperProfile : Profile
     {

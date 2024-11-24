@@ -5,7 +5,7 @@ using SurveyPlatform.DAL.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SurveyPlatform.Business
+namespace SurveyPlatform.BLL
 {
     public class UserService
     {

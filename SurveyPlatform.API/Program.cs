@@ -9,8 +9,8 @@ using SurveyPlatform.DAL.Data;
 using SurveyPlatform.DAL.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using SurveyPlatform.Business.Mappings;
-using SurveyPlatform.Business;
+using SurveyPlatform.BLL.Mappings;
+using SurveyPlatform.BLL;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace SurveyPlatform
