@@ -20,7 +20,7 @@ namespace SurveyPlatform.Business
             _tokenService = tokenService;
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(Guid id)
         {
             return await _userRepository.GetUserById(id);
         }
@@ -60,7 +60,7 @@ namespace SurveyPlatform.Business
             _userRepository.UpdateUser(user);
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(Guid id)
         {
             _userRepository.DeleteUser(id);
         }

@@ -2,6 +2,6 @@
 
 public class SubmitResponseRequest
 {
-    public int OptionID { get; set; }
-    public int UserID { get; set; }
+    public Guid OptionID { get; set; }
+    public Guid UserID { get; set; }
 }

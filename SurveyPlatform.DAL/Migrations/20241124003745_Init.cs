@@ -1,15 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
-
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace SurveyPlatform.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,11 +15,11 @@ namespace SurveyPlatform.DAL.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false)
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    Roles = table.Column<string[]>(type: "text[]", nullable: false, defaultValue: new[] { "User" })
                 },
                 constraints: table =>
                 {
@@ -33,13 +30,12 @@ namespace SurveyPlatform.DAL.Migrations
                 name: "Polls",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    AuthorID = table.Column<int>(type: "integer", nullable: false)
+                    AuthorID = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,10 +52,9 @@ namespace SurveyPlatform.DAL.Migrations
                 name: "PollOptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    PollId = table.Column<int>(type: "integer", nullable: false)
+                    PollId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,11 +71,10 @@ namespace SurveyPlatform.DAL.Migrations
                 name: "PollResponses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PollId = table.Column<int>(type: "integer", nullable: false),
-                    OptionId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PollId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OptionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -103,36 +97,6 @@ namespace SurveyPlatform.DAL.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "Email", "Name", "Password" },
-                values: new object[,]
-                {
-                    { 1, "admin@example.com", "Admin", "admin123" },
-                    { 2, "ne_admin@example.com", "NeAdmin", "tochno_ne_admin123" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Polls",
-                columns: new[] { "Id", "AuthorID", "CreatedAt", "Description", "Title", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 1, new DateTime(2024, 11, 15, 16, 38, 19, 802, DateTimeKind.Utc).AddTicks(9720), "Проголосуй за лучший язык программирования.", "Любимый язык программирования", new DateTime(2024, 11, 15, 16, 38, 19, 802, DateTimeKind.Utc).AddTicks(9721) },
-                    { 2, 2, new DateTime(2024, 11, 15, 16, 38, 19, 802, DateTimeKind.Utc).AddTicks(9722), "Кто станет президентом США в 2028.", "Президент США", new DateTime(2024, 11, 15, 16, 38, 19, 802, DateTimeKind.Utc).AddTicks(9723) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PollOptions",
-                columns: new[] { "Id", "Content", "PollId" },
-                values: new object[,]
-                {
-                    { 1, "C#", 1 },
-                    { 2, "Java", 1 },
-                    { 3, "Python", 1 },
-                    { 4, "Трамп(наш слон)", 2 },
-                    { 5, "Харрис(не наш слон)", 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -159,6 +123,12 @@ namespace SurveyPlatform.DAL.Migrations
                 name: "IX_Polls_AuthorID",
                 table: "Polls",
                 column: "AuthorID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />

@@ -9,10 +9,10 @@ namespace SurveyPlatform.DAL.Interfaces
 {
     public interface IUserRepository
     {
-        Task<User> GetUserById(int id);
+        Task<User> GetUserById(Guid id);
         IEnumerable<User> GetAllUsers();
         Task<User> CreateUser(User user);
         void UpdateUser(User user);
-        void DeleteUser(int id);
+        void DeleteUser(Guid id);
     }
 }

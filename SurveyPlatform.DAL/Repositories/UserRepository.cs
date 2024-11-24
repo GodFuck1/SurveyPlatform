@@ -25,7 +25,7 @@ namespace SurveyPlatform.DAL.Repositories
             return await GetUserById(user.Id);
         }
 
-        public async void DeleteUser(int id)
+        public async void DeleteUser(Guid id)
         {
             var userToDelete = await GetUserById(id);
             _context.Remove(userToDelete);
@@ -37,7 +37,7 @@ namespace SurveyPlatform.DAL.Repositories
             return _context.Users.Include(p => p.Polls).Include(p => p.Responses).ToList();
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<User> GetUserById(Guid id)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 

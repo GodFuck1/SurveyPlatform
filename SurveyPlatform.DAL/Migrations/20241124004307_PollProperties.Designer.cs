@@ -13,8 +13,8 @@ using SurveyPlatform.DAL.Data;
 namespace SurveyPlatform.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241121174043_EmailUniqueCell")]
-    partial class EmailUniqueCell
+    [Migration("20241124004307_PollProperties")]
+    partial class PollProperties
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,14 +28,12 @@ namespace SurveyPlatform.DAL.Migrations
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.Poll", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AuthorID")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("AuthorID")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -60,18 +58,16 @@ namespace SurveyPlatform.DAL.Migrations
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollOption", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("PollId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("PollId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -82,20 +78,18 @@ namespace SurveyPlatform.DAL.Migrations
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollResponse", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("OptionId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("OptionId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("PollId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("PollId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -110,11 +104,9 @@ namespace SurveyPlatform.DAL.Migrations
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .IsRequired()
