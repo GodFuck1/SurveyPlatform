@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using SurveyPlatform.BLL.Models;
+using SurveyPlatform.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +11,9 @@ namespace SurveyPlatform.BLL.Mappings
 {
     public class PollMapperProfile : Profile
     {
+        public PollMapperProfile()
+        {
+            CreateMap<PollModel, Poll>();
+        }
     }
 }

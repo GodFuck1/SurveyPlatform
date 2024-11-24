@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SurveyPlatform.API.DTOs.Requests;
 using SurveyPlatform.BLL;
+using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DTOs.Requests;
+using SurveyPlatform.DTOs.Requests.Validators;
 using SurveyPlatform.DTOs.Responses;
 
 
@@ -16,10 +19,12 @@ namespace SurveyPlatform.Controllers
     public class PollsController : ControllerBase
     {
         private readonly PollService _pollService;
+        private readonly IMapper _mapper;
 
-        public PollsController(PollService pollService)
+        public PollsController(PollService pollService,IMapper mapper)
         {
             _pollService = pollService;
+            _mapper = mapper;
         }
         /// <summary>
         /// Получение списка опросов (без результатов)
@@ -65,6 +70,12 @@ namespace SurveyPlatform.Controllers
         [HttpPost("{id}/submit-response")]
         public async Task<ActionResult<PollResultsResponse>> SubmitResponse(Guid id,[FromForm] SubmitResponseRequest submitResponseRequest)
         {
+            var validator = new SubmitResponseRequestValidator();
+            var validationResult = await validator.ValidateAsync(submitResponseRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
             await _pollService.AddPollResponse(null);
             return Ok();
         }
@@ -77,7 +88,14 @@ namespace SurveyPlatform.Controllers
         [HttpPost]
         public async Task<ActionResult<PollDataResponse>> CreatePoll([FromForm] CreatePollRequest pollRequest)
         {
-            await _pollService.CreatePoll(null);
+            var validator = new CreatePollRequestValidator();
+            var validationResult = await validator.ValidateAsync(pollRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+            var newPoll = _mapper.Map<PollModel>(pollRequest);
+            await _pollService.CreatePoll(newPoll);
             return Ok();
         }
 
@@ -91,6 +109,12 @@ namespace SurveyPlatform.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<PollDataResponse>> UpdatePoll(Guid id,[FromForm] UpdatePollRequest updatePollRequest)
         {
+            var validator = new UpdatePollRequestValidator();
+            var validationResult = await validator.ValidateAsync(updatePollRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
             await _pollService.UpdatePoll(null);
             return Ok();
         }
