@@ -12,6 +12,7 @@ using System.Text;
 using SurveyPlatform.BLL.Mappings;
 using SurveyPlatform.BLL;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using SurveyPlatform.API.Configuration;
 
 namespace SurveyPlatform
 {
@@ -33,31 +34,10 @@ namespace SurveyPlatform
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
             );
 
-            var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
-            builder.Services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(opt =>
-            opt.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ValidAudience = builder.Configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            });
+            builder.AddAuth(); //авторизация по jwt токену
+            builder.Services.AddMappers(); //мапперы
+            builder.Services.AddCustomServices(); //кастомные сервисы и репозитории
             
-            builder.Services.AddAutoMapper(typeof(UserMapperProfile));
-            builder.Services.AddAutoMapper(typeof(UserDTOMapperProfile));
-
-            builder.Services.AddScoped<IPollRepository, PollRepository>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<PollService>();
-            builder.Services.AddScoped<UserService>();
-            builder.Services.AddSingleton<TokenService>();
 
             var app = builder.Build();
 
