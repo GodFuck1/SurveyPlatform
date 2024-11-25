@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SurveyPlatform.API.DTOs.Requests;
 using SurveyPlatform.BLL.Models;
-using SurveyPlatform.Business;
+using SurveyPlatform.BLL;
 using SurveyPlatform.DTOs.Requests.Validators;
 using SurveyPlatform.DTOs.Responses;
 

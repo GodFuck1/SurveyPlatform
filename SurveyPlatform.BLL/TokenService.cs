@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SurveyPlatform.Business
+namespace SurveyPlatform.BLL
 {
     public class TokenService
     {
