@@ -27,14 +27,6 @@ namespace SurveyPlatform.Controllers
         [HttpPost]
         public async Task<ActionResult<UserResponse>> Register([FromBody] RegisterUserRequest request)
         {
-            var validator = new RegisterUserRequestValidator();
-            var validationResult = await validator.ValidateAsync(request);
-
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors);
-            }
-
             var newUserData = _mapper.Map<RegisterUserRequest, UserRegisterModel>(request);
             var userResponse = await _userService.RegisterUserAsync(newUserData);
             if (userResponse != null) return Ok(userResponse);
@@ -45,13 +37,6 @@ namespace SurveyPlatform.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login([FromBody] LoginUserRequest request)
         {
-            var validator = new LoginUserRequestValidator();
-            var validationResult = await validator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors);
-            }
-
             var userModel = _mapper.Map<LoginUserRequest, UserLoginModel>(request);
             var loginResponse = await _userService.LoginUserAsync(userModel);
             if (loginResponse == string.Empty) return Unauthorized("Email Or Password Is Incorrect");

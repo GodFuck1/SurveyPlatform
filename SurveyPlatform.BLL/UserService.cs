@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SurveyPlatform.BLL.Exceptions;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
@@ -35,7 +36,7 @@ namespace SurveyPlatform.BLL
         public async Task<UserModel> RegisterUserAsync(UserRegisterModel userModel)
         {
             var existUser = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == userModel.Email);
-            if (existUser != null) return null;
+            if (existUser != null) throw new EntityConflictException("Email already registred");
             userModel.Password = HashPassword(userModel.Password);
             var user = _mapper.Map<User>(userModel);
             var createdUser = await _userRepository.CreateUser(user);
