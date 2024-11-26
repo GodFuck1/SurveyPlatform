@@ -10,7 +10,7 @@ using SurveyPlatform.DTOs.Responses;
 namespace SurveyPlatform.Controllers
 {
     [Route("api/users")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class UsersController : Controller
     {
@@ -44,31 +44,52 @@ namespace SurveyPlatform.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<UserResponse>> GetUsers()
+        public async Task<ActionResult<List<UserResponse>>> GetUsers()
         {
-            var users = _userService.GetAllUsers();
+            var users = await _userService.GetAllUsers();
             var allUsers = _mapper.Map<List<UserResponse>>(users);
             return Ok(allUsers);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<UserResponse> GetUserByID([FromRoute] Guid id)
+        public async Task<ActionResult<UserResponse>> GetUserByID([FromRoute] Guid id)
         {
-            var users = _userService.GetUserByIdAsync(id);
+            var users = await _userService.GetUserByIdAsync(id);
             var userMapped = _mapper.Map<UserResponse>(users);
             return Ok(userMapped);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
+        [HttpGet("{id}/responses")]
+        public async Task<ActionResult<UserResponsesResponse>> GetUserResponses([FromRoute] Guid id)
         {
-            return NoContent();
+            var users = await _userService.GetUserResponsesByIdAsync(id);
+            var userMapped = _mapper.Map<UserResponsesResponse>(users);
+            return Ok(userMapped);
+        }
+
+        [HttpGet("{id}/polls")]
+        public async Task<ActionResult<UserPollsResponse>> GetUserPolls([FromRoute] Guid id)
+        {
+            var users = await _userService.GetUserPollsByIdAsync(id);
+            var userMapped = _mapper.Map<UserPollsResponse>(users);
+            return Ok(userMapped);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserResponse>> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
+        {
+            var userMapped = _mapper.Map<UpdateUserModel>(request);
+            var updatedUser = await _userService.UpdateUserAsync(id,userMapped);
+            var updatedUserMapped = _mapper.Map<UserResponse>(updatedUser);
+            return Ok(updatedUserMapped);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser([FromRoute] Guid id)
+        [Authorize(Roles ="Admin")]
+        public async Task<ActionResult> DeleteUser([FromRoute] Guid id)
         {
-            return NoContent();
+            await _userService.DeleteUserAsync(id);
+            return Ok();
         }
 
         [HttpPatch("{id}/deactivate")]

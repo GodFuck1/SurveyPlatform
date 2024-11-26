@@ -15,6 +15,7 @@ namespace SurveyPlatform.DAL.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            //CleanupDB();
         }
 
         public DbSet<Poll> Polls { get; set; }
@@ -28,6 +29,13 @@ namespace SurveyPlatform.DAL.Data
             modelBuilder.ConfigureUserEntity();
             modelBuilder.ConfigurePollEntity();
             modelBuilder.ConfigurePollOptionEntity();
+            modelBuilder.ConfigurePollResponseEntity();
+        }
+
+        void CleanupDB()
+        {
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
         }
     }
 }

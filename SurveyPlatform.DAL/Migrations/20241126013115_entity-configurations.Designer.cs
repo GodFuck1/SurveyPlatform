@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SurveyPlatform.DAL.Data;
@@ -11,9 +12,11 @@ using SurveyPlatform.DAL.Data;
 namespace SurveyPlatform.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241126013115_entity-configurations")]
+    partial class entityconfigurations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasIndex("AuthorID");
 
-                    b.ToTable("Polls", (string)null);
+                    b.ToTable("Polls");
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollOption", b =>
@@ -69,7 +72,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasIndex("PollId");
 
-                    b.ToTable("PollOptions", (string)null);
+                    b.ToTable("PollOptions");
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollResponse", b =>
@@ -95,7 +98,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PollResponses", (string)null);
+                    b.ToTable("PollResponses");
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.User", b =>
@@ -131,7 +134,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.Poll", b =>

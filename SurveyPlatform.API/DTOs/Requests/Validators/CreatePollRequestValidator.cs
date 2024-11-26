@@ -20,7 +20,8 @@ namespace SurveyPlatform.DTOs.Requests.Validators
             RuleFor(x => x.Options)
                 .NotNull().WithMessage("Варианты ответа не должны быть пустыми")
                 .NotEmpty().WithMessage("Варианты ответа не должны быть пустыми")
-                .Must(options => options.Count >= 2).WithMessage("Необходимо указать хотя бы два варианта ответа.");
+                .Must(options => options != null && options.Count >= 2)
+                .WithMessage("Необходимо указать хотя бы два варианта ответа.");
 
             RuleFor(x => x.AuthorID)
                 .NotNull().WithMessage("Варианты ответа не должны быть пустыми")
