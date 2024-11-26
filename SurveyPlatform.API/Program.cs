@@ -1,18 +1,11 @@
 
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using SurveyPlatform.DTOs.Requests.Validators;
-using SurveyPlatform.DAL.Interfaces;
 using SurveyPlatform.DAL.Data;
-using SurveyPlatform.DAL.Repositories;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using SurveyPlatform.BLL.Mappings;
-using SurveyPlatform.BLL;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using SurveyPlatform.API.Configuration;
+using System.Text.Json.Serialization;
 
 namespace SurveyPlatform
 {

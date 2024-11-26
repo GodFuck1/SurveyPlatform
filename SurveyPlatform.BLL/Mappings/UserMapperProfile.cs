@@ -10,6 +10,7 @@ namespace SurveyPlatform.BLL.Mappings
         {
             CreateMap<UserRegisterModel, User>();
             CreateMap<User, UserModel>();
+            CreateMap<UserModel, User>();
         }
     }
 }

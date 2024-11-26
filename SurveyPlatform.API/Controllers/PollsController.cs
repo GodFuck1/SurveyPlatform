@@ -31,10 +31,11 @@ namespace SurveyPlatform.Controllers
         /// </summary>
         /// <returns>Список опросов</returns>
         [HttpGet]
-        public async Task<ActionResult<List<PollDataResponse>>> GetPolls()
+        public async Task<ActionResult<IEnumerable<PollDataResponse>>> GetPolls()
         {
-            var pollsData = await _pollService.GetAllPolls();
-            return Ok(pollsData);
+            var pollsData = await _pollService.GetAllPollsAsync();
+            var pollsMapped = _mapper.Map<IEnumerable<PollDataResponse>>(pollsData);
+            return Ok(pollsMapped);
         }
 
         /// <summary>
@@ -45,8 +46,9 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PollDataResponse>> GetPollById(Guid id)
         {
-            var pollData = await _pollService.GetPollById(id);
-            return Ok(pollData);
+            var pollData = await _pollService.GetPollByIdAsync(id);
+            var poll = _mapper.Map<PollDataResponse>(pollData);
+            return Ok(poll);
         }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}/results")]
         public IActionResult GetPollResults(Guid id)
         {
-            var pollResults = _pollService.GetResponsesByPollId(id);
+            var pollResults = _pollService.GetResponsesByPollIdAsync(id);
             return Ok(pollResults);
         }
 
@@ -70,7 +72,7 @@ namespace SurveyPlatform.Controllers
         [HttpPost("{id}/submit-response")]
         public async Task<ActionResult<PollResultsResponse>> SubmitResponse(Guid id,[FromForm] SubmitResponseRequest submitResponseRequest)
         {
-            await _pollService.AddPollResponse(null);
+            await _pollService.AddPollResponseAsync(null);
             return Ok();
         }
 
@@ -83,7 +85,7 @@ namespace SurveyPlatform.Controllers
         public async Task<ActionResult<PollDataResponse>> CreatePoll([FromForm] CreatePollRequest pollRequest)
         {
             var newPoll = _mapper.Map<PollModel>(pollRequest);
-            await _pollService.CreatePoll(newPoll);
+            await _pollService.CreatePollAsync(newPoll);
             return Ok();
         }
 
@@ -97,7 +99,7 @@ namespace SurveyPlatform.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<PollDataResponse>> UpdatePoll(Guid id,[FromForm] UpdatePollRequest updatePollRequest)
         {
-            await _pollService.UpdatePoll(null);
+            await _pollService.UpdatePollAsync(null);
             return Ok();
         }
 
@@ -109,7 +111,7 @@ namespace SurveyPlatform.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePoll(Guid id)
         {
-            await _pollService.DeletePoll(id);
+            await _pollService.DeletePollAsync(id);
             return Ok();
         }
     }

@@ -49,7 +49,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasIndex("AuthorID");
 
-                    b.ToTable("Polls");
+                    b.ToTable("Polls", (string)null);
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollOption", b =>
@@ -69,7 +69,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasIndex("PollId");
 
-                    b.ToTable("PollOptions");
+                    b.ToTable("PollOptions", (string)null);
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.PollResponse", b =>
@@ -95,7 +95,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PollResponses");
+                    b.ToTable("PollResponses", (string)null);
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.User", b =>
@@ -131,7 +131,7 @@ namespace SurveyPlatform.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("SurveyPlatform.DAL.Entities.Poll", b =>

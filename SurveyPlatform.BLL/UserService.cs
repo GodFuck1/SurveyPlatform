@@ -21,9 +21,24 @@ namespace SurveyPlatform.BLL
             _tokenService = tokenService;
         }
 
-        public async Task<User> GetUserByIdAsync(Guid id)
+        public async Task<UserModel> GetUserByIdAsync(Guid id)
         {
-            return await _userRepository.GetUserById(id);
+            var user = await _userRepository.GetUserById(id);
+            var userModel = _mapper.Map<UserModel>(user);
+            return userModel;
+        }
+
+        public async Task<UserModel> GetUserResponsesByIdAsync(Guid id)
+        {
+            var user = await _userRepository.GetUserById(id);
+            var userModel = _mapper.Map<UserModel>(user);
+            return userModel;
+        }
+        public async Task<UserModel> GetUserPollsByIdAsync(Guid id)
+        {
+            var user = await _userRepository.GetUserById(id);
+            var userModel = _mapper.Map<UserModel>(user);
+            return userModel;
         }
 
         public async Task<IEnumerable<UserModel>> GetAllUsers()
