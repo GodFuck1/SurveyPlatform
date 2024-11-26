@@ -12,6 +12,8 @@ namespace SurveyPlatform.BLL.Mappings
         public UserDTOMapperProfile()
         {
             CreateMap<UserModel, UserResponse>();
+            CreateMap<UserModel, UpdateUserModel>();
+            CreateMap<UpdateUserRequest, UpdateUserModel>();
             CreateMap<UserPolls, UserPollsResponse>();
             CreateMap<UserResponses, UserResponsesResponse>();
             CreateMap<RegisterUserRequest, UserRegisterModel>();

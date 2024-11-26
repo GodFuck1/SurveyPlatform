@@ -76,15 +76,20 @@ namespace SurveyPlatform.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
+        public async Task<ActionResult<UserResponse>> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
         {
-            return NoContent();
+            var userMapped = _mapper.Map<UpdateUserModel>(request);
+            var updatedUser = await _userService.UpdateUserAsync(id,userMapped);
+            var updatedUserMapped = _mapper.Map<UserResponse>(updatedUser);
+            return Ok(updatedUserMapped);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser([FromRoute] Guid id)
+        [Authorize(Roles ="Admin")]
+        public async Task<ActionResult> DeleteUser([FromRoute] Guid id)
         {
-            return NoContent();
+            await _userService.DeleteUserAsync(id);
+            return Ok();
         }
 
         [HttpPatch("{id}/deactivate")]

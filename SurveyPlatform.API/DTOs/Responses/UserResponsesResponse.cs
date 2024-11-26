@@ -1,6 +1,4 @@
-﻿using SurveyPlatform.BLL.Models;
-
-namespace SurveyPlatform.DTOs.Responses;
+﻿namespace SurveyPlatform.DTOs.Responses;
 
 public class UserResponsesResponse
 {

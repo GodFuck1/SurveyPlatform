@@ -24,6 +24,8 @@ namespace SurveyPlatform.BLL
         public async Task<UserModel> GetUserByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserById(id);
+            if (user == null)
+                throw new EntityNotFoundException($"User {id} not found");
             var userModel = _mapper.Map<UserModel>(user);
             return userModel;
         }
@@ -31,12 +33,16 @@ namespace SurveyPlatform.BLL
         public async Task<UserResponses> GetUserResponsesByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserResponsesById(id);
+            if (user == null)
+                throw new EntityNotFoundException($"User {id} not found");
             var userResponses = _mapper.Map<UserResponses>(user);
             return userResponses;
         }
         public async Task<UserPolls> GetUserPollsByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserPollsById(id);
+            if (user == null)
+                throw new EntityNotFoundException($"User {id} not found");
             var userPolls = _mapper.Map<UserPolls>(user);
             return userPolls;
         }
@@ -69,7 +75,9 @@ namespace SurveyPlatform.BLL
         {
             var users = await _userRepository.GetAllUsers();
             var user = users.FirstOrDefault(u => u.Email == userModel.Email);
-            if (user == null || !VerifyPassword(userModel.Password, user.Password))
+            if (user == null)
+                throw new EntityNotFoundException($"User {user.Id} not found");
+            if (!VerifyPassword(userModel.Password, user.Password))
             {
                 return string.Empty;
             }
@@ -78,14 +86,25 @@ namespace SurveyPlatform.BLL
 
             return token;
         }
-        public async Task UpdateUserAsync(User user)
+        public async Task<UserModel> UpdateUserAsync(Guid id,UpdateUserModel updateUserModel)
         {
-            _userRepository.UpdateUser(user);
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+                throw new EntityNotFoundException($"User {id} not found");
+            if (!VerifyPassword(updateUserModel.Password, user.Password))
+                throw new EntityConflictException("Wrong password");
+            user.Name = updateUserModel.Name;
+            var updatedUser = await _userRepository.UpdateUser(user);
+            var mappedUser = _mapper.Map<UserModel>(updatedUser);
+            return mappedUser;
         }
 
         public async Task DeleteUserAsync(Guid id)
         {
-            _userRepository.DeleteUser(id);
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+                throw new EntityNotFoundException($"User {id} not found");
+            await _userRepository.DeleteUser(id);
         }
 
         private string HashPassword(string password)
