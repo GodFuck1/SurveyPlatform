@@ -11,12 +11,6 @@ namespace SurveyPlatform.API.Mappings
         public PollDTOMapperProfile()
         {
             CreateMap<CreatePollRequest, PollModel>();
-            CreateMap<PollResponse, PollResultsResponse>().ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Poll.Options.Select(o => new OptionResult
-            {
-                OptionId = o.Id,
-                Content = o.Content,
-                
-            }).ToList()));
             CreateMap<PollModel, PollDataResponse>();
             CreateMap<PollOptionModel, OptionResponse>(); //варианты для голоса
             CreateMap<PollResponseModel, PollSubmittedResponse>(); //голоса людей

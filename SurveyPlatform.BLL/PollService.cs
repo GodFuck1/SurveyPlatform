@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using SurveyPlatform.BLL.Exceptions;
 using SurveyPlatform.BLL.Helpers;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
+using SurveyPlatform.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +19,18 @@ namespace SurveyPlatform.BLL
     public class PollService
     {
         private readonly IPollRepository _pollRepository;
+        private readonly UserService _userService;
+        private readonly IOptionRepository _optionRepository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PollService(IPollRepository pollRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public PollService(IPollRepository pollRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IOptionRepository optionRepository, UserService userService)
         {
             _pollRepository = pollRepository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _optionRepository = optionRepository;
+            _userService = userService;
         }
 
         public async Task<PollModel> GetPollByIdAsync(Guid id)
@@ -48,14 +55,16 @@ namespace SurveyPlatform.BLL
             return createdPoll;
         }
 
-        public async Task<bool> UpdatePollAsync(UpdatePollModel updatePoll)
+        public async Task<PollModel> UpdatePollAsync(UpdatePollModel updatePoll)
         {
             var poll = await _pollRepository.GetPollByIdAsync(updatePoll.PollId);
-            if (poll == null) return false;
+            if (poll == null) return null; // EntityNotFoundException
             poll.Title = updatePoll.Title;
             poll.Description = updatePoll.Description;
             await _pollRepository.UpdatePollAsync(poll);
-            return true;
+            poll = await _pollRepository.GetPollByIdAsync(updatePoll.PollId);
+            var pollMapped = await GetPollByIdAsync(poll.Id);
+            return pollMapped;
         }
 
         public async Task DeletePollAsync(Guid id)
@@ -67,10 +76,21 @@ namespace SurveyPlatform.BLL
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var userId = JwtHelper.GetUserIdFromToken(httpContext);
-            if (userId == null)
-            {
-                return null;
-            }
+            var user = await _userService.GetUserByIdAsync((Guid)userId);
+            var option = await _optionRepository.GetOptionByIdAsync(optionId);
+            var poll = await GetPollByIdAsync((Guid)pollId);
+
+            if (poll == null) 
+                throw new EntityNotFoundException($"Poll {pollId} not found");
+            if (option == null) 
+                throw new EntityNotFoundException($"Option {optionId} not found");
+            if (user == null) 
+                throw new EntityNotFoundException($"User {userId} not found");
+            if (poll.Id != option.PollId) 
+                throw new EntityConflictException($"Option ID[{optionId}] doesn't collection of Poll[{pollId}]");// Вариант ответа не из этого опроса
+            if (poll.Responses?.FirstOrDefault()?.UserId == user.Id) 
+                throw new EntityConflictException($"User already do response for that poll");// Человек уже голосовал в этом опросе
+            
             var pollResponse = new PollResponse
             {
                 PollId = pollId,
@@ -80,6 +100,18 @@ namespace SurveyPlatform.BLL
             var pollResponses = await _pollRepository.AddPollResponseAsync(pollResponse);
             var pollModel = _mapper.Map<PollModel>(pollResponses);
             return pollModel;
+        }
+
+        /// <summary>
+        /// Проверка на возможность проголосовать в опросе
+        /// </summary>
+        /// <param name="pollModel">Модель опроса</param>
+        /// <param name="optionModel">Модель варианта ответа</param>
+        /// <param name="userModel">Модель пользователя</param>
+        /// <returns></returns>
+        private bool CanAddResponse(PollModel pollModel,PollOption optionModel,UserModel userModel)
+        {
+            return true;
         }
 
         public async Task<PollModel> GetResponsesByPollIdAsync(Guid pollId)

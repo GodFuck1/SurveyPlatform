@@ -69,7 +69,14 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{pollId}/submit-response/{optionId}")]
         public async Task<ActionResult<PollDataResponse>> SubmitResponse(Guid pollId, Guid optionId)
         {
+            var poll = await _pollService.GetPollByIdAsync(pollId);
+            if (poll == null)
+                throw new EntityNotFoundException("Poll not found");
+
             var pollResults = await _pollService.AddPollResponseAsync(pollId,optionId);
+            if (pollResults == null)
+                throw new UnauthorizedAccessException("User not found");
+
             var pollMappedResults = _mapper.Map<PollDataResponse>(pollResults);
             return Ok(pollMappedResults);
         }
@@ -91,19 +98,19 @@ namespace SurveyPlatform.Controllers
         /// <summary>
         /// Обновление опроса
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Id опроса</param>
         /// <param name="updatePollRequest">Тело запроса с новыми Title & Description</param>
         /// <returns>Обновлённый опрос</returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<PollDataResponse>> UpdatePoll(Guid id,[FromForm] UpdatePollRequest updatePollRequest)
         {
             var mappedUpdatePollRequest = _mapper.Map<UpdatePollModel>(updatePollRequest);
-            var result = await _pollService.UpdatePollAsync(mappedUpdatePollRequest);
-            if (result == false)
+            var updatedPoll = await _pollService.UpdatePollAsync(mappedUpdatePollRequest);
+            if (updatedPoll == null)
             {
                 throw new EntityNotFoundException($"Poll {updatePollRequest.PollId} not found");
             }
-            return Ok();
+            return Ok(updatedPoll);
         }
 
         /// <summary>
