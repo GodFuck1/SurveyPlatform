@@ -26,17 +26,22 @@ namespace SurveyPlatform.BLL
             return await _userRepository.GetUserById(id);
         }
 
-        public IEnumerable<UserModel> GetAllUsers()
+        public async Task<IEnumerable<UserModel>> GetAllUsers()
         {
-            var users = _userRepository.GetAllUsers();
+            var users = await _userRepository.GetAllUsers();
             var usersResponses = _mapper.Map<IList<UserModel>>(users);
             return usersResponses;
         }
 
         public async Task<UserModel> RegisterUserAsync(UserRegisterModel userModel)
         {
-            var existUser = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == userModel.Email);
-            if (existUser != null) throw new EntityConflictException("Email already registred");
+            var users = await _userRepository.GetAllUsers();
+            var existUser = users.FirstOrDefault(u => u.Email == userModel.Email);
+            if (existUser != null)
+            {
+                throw new EntityConflictException("Email have already been used");
+            }
+                
             userModel.Password = HashPassword(userModel.Password);
             var user = _mapper.Map<User>(userModel);
             var createdUser = await _userRepository.CreateUser(user);
@@ -46,7 +51,8 @@ namespace SurveyPlatform.BLL
 
         public async Task<string> LoginUserAsync(UserLoginModel userModel)
         {
-            var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Email == userModel.Email);
+            var users = await _userRepository.GetAllUsers();
+            var user = users.FirstOrDefault(u => u.Email == userModel.Email);
             if (user == null || !VerifyPassword(userModel.Password, user.Password))
             {
                 return string.Empty;
