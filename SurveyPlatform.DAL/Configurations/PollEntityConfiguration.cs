@@ -8,28 +8,31 @@ internal static class PollEntityConfiguration
     internal static void ConfigurePollEntity(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Poll>()
-            .HasMany(p => p.Options)
-            .WithOne(o => o.Poll)
-            .HasForeignKey(o => o.PollId)
-            .HasPrincipalKey(p => p.Id);
+            .HasOne(Poll => Poll.Author)
+            .WithMany(User => User.Polls)
+            .HasForeignKey(Poll => Poll.AuthorID)
+            .HasPrincipalKey(User => User.Id);
 
         modelBuilder.Entity<Poll>()
-            .HasMany(p => p.Responses)
-            .WithOne(r => r.Poll)
-            .HasForeignKey(r => r.PollId)
-            .HasPrincipalKey(p => p.Id);
+            .HasMany(Poll => Poll.Options)
+            .WithOne(PollOption => PollOption.Poll)
+            .HasForeignKey(PollOption => PollOption.PollId)
+            .HasPrincipalKey(Poll => Poll.Id);
 
         modelBuilder.Entity<Poll>()
-            .HasOne(p => p.Author)
-            .WithMany(u => u.Polls)
-            .HasForeignKey(p => p.AuthorID)
-            .HasPrincipalKey(p => p.Id);
+            .HasMany(Poll => Poll.Responses)
+            .WithOne(PollResponse => PollResponse.Poll)
+            .HasForeignKey(PollResponse => PollResponse.PollId)
+            .HasPrincipalKey(Poll => Poll.Id);
 
         modelBuilder.Entity<Poll>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired();
             entity.Property(e => e.Description).IsRequired();
+            entity.Property(e => e.AuthorID).IsRequired();
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.UpdatedAt).IsRequired();
         });
     }
 }
