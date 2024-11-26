@@ -18,7 +18,10 @@ namespace SurveyPlatform.DAL.Repositories
         {
             return await _context.Polls.Include(p => p.Options).FirstOrDefaultAsync(p => p.Id == id);
         }
-
+        public async Task<Poll> GetPollByOptionIdAsync(Guid id)
+        {
+            return await _context.Polls.Include(p => p.Options).FirstOrDefaultAsync(p => p.Options.Any(o => o.Id == id));
+        }
         public async Task<IEnumerable<Poll>> GetAllPollsAsync()
         {
             return await _context.Polls.Include(p => p.Options).ToListAsync();
@@ -52,15 +55,21 @@ namespace SurveyPlatform.DAL.Repositories
             }
         }
 
-        public async Task AddPollResponseAsync(PollResponse response)
+        public async Task<Poll> AddPollResponseAsync(PollResponse response)
         {
             _context.PollResponses.Add(response);
             await _context.SaveChangesAsync();
+            var poll = await GetPollWithResponsesAsync(response.PollId);
+            return poll;
         }
 
-        public async Task<IEnumerable<PollResponse>> GetResponsesByPollIdAsync(Guid pollId)
+        public async Task<Poll> GetPollWithResponsesAsync(Guid pollId)
         {
-            return await _context.PollResponses.Where(r => r.PollId == pollId).ToListAsync();
+            var poll = await _context.Polls
+                .Include(o=>o.Options)
+                .Include(r=>r.Responses)
+                .FirstOrDefaultAsync(p => p.Id == pollId);
+            return poll;
         }
     }
 }

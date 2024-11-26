@@ -12,6 +12,7 @@ namespace SurveyPlatform.BLL.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public ICollection<PollOptionModel> Options { get; set; }
+        public ICollection<PollResponseModel> Responses { get; set; }
         public Guid AuthorID { get; set; }
     }
 
@@ -19,5 +20,11 @@ namespace SurveyPlatform.BLL.Models
     {
         public Guid Id { get; set; }
         public string Content { get; set; }
+    }
+    public class PollResponseModel
+    {
+        public Guid Id { get; set; }
+        public Guid OptionId { get; set; }
+        public Guid UserId { get; set; }
     }
 }
