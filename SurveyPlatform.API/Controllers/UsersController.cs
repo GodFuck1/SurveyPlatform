@@ -15,14 +15,12 @@ namespace SurveyPlatform.Controllers
     public class UsersController : Controller
     {
         private readonly UserService _userService;
-        private readonly PollService _pollService;
         private readonly IMapper _mapper;
 
-        public UsersController(UserService userService,IMapper Mapper, PollService pollService)
+        public UsersController(UserService userService,IMapper Mapper)
         {
             _userService = userService;
             _mapper = Mapper;
-            _pollService = pollService;
         }
 
         [AllowAnonymous]

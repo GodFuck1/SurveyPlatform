@@ -28,6 +28,8 @@ public class PollService
     public async Task<PollModel> GetPollByIdAsync(Guid id)
     {
         var poll = await _pollRepository.GetPollByIdAsync(id);
+        if (poll == null)
+            throw new EntityNotFoundException($"Poll {id} not found");
         var pollMapped = _mapper.Map<PollModel>(poll);
         return pollMapped;
     }
@@ -42,6 +44,7 @@ public class PollService
     public async Task<PollModel> CreatePollAsync(PollModel poll)
     {
         var pollEntity = _mapper.Map<Poll>(poll);
+        pollEntity.CreatedAt = DateTime.UtcNow;
         await _pollRepository.CreatePollAsync(pollEntity);
         var createdPoll = await GetPollByIdAsync(pollEntity.Id);
         return createdPoll;

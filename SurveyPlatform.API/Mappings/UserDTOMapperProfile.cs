@@ -3,6 +3,7 @@ using AutoMapper;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DTOs.Responses;
 using SurveyPlatform.API.DTOs.Requests;
+using SurveyPlatform.API.DTOs.Responses;
 
 namespace SurveyPlatform.BLL.Mappings
 {

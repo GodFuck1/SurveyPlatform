@@ -59,6 +59,7 @@ namespace SurveyPlatform.BLL
                 
             userModel.Password = HashPassword(userModel.Password);
             var user = _mapper.Map<User>(userModel);
+            user.Created = DateTime.UtcNow;
             var createdUser = await _userRepository.CreateUser(user);
             var userResponse = _mapper.Map<UserModel>(createdUser);
             return userResponse;
