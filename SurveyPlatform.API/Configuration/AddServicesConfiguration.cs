@@ -10,6 +10,7 @@ internal static class AddServicesConfiguration
     {
         services.AddScoped<IPollRepository, PollRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IOptionRepository, OptionRepository>();
         services.AddScoped<PollService>();
         services.AddScoped<UserService>();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
