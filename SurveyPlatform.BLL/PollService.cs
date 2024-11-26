@@ -50,7 +50,8 @@ public class PollService
     public async Task<PollModel> UpdatePollAsync(UpdatePollModel updatePoll)
     {
         var poll = await _pollRepository.GetPollByIdAsync(updatePoll.PollId);
-        if (poll == null) return null; // EntityNotFoundException
+        if (poll == null)
+            throw new EntityNotFoundException($"Poll {updatePoll.PollId} not found");
         poll.Title = updatePoll.Title;
         poll.Description = updatePoll.Description;
         await _pollRepository.UpdatePollAsync(poll);
@@ -70,7 +71,7 @@ public class PollService
         var userId = JwtHelper.GetUserIdFromToken(httpContext);
         var user = await _userService.GetUserByIdAsync((Guid)userId);
         var option = await _optionRepository.GetOptionByIdAsync(optionId);
-        var poll = await GetPollByIdAsync((Guid)pollId);
+        var poll = await _pollRepository.GetPollWithResponsesAsync(pollId);
 
         if (poll == null) 
             throw new EntityNotFoundException($"Poll {pollId} not found");
@@ -97,6 +98,9 @@ public class PollService
     public async Task<PollModel> GetResponsesByPollIdAsync(Guid pollId)
     {
         var poll = await _pollRepository.GetPollWithResponsesAsync(pollId);
+        if (poll == null)
+            throw new EntityNotFoundException($"Poll {pollId} not found");
+
         var pollModel = _mapper.Map<PollModel>(poll);
         return pollModel;
     }

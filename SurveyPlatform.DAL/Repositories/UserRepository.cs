@@ -39,7 +39,22 @@ namespace SurveyPlatform.DAL.Repositories
 
         public async Task<User> GetUserById(Guid id)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return await _context.Users.
+                FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<User> GetUserPollsById(Guid id)
+        {
+            return await _context.Users.
+                Include(p => p.Polls).
+                FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<User> GetUserResponsesById(Guid id)
+        {
+            return await _context.Users.
+                Include(p => p.Responses).
+                FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async void UpdateUser(User user)

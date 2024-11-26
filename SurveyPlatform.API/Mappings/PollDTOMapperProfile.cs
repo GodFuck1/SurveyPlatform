@@ -10,7 +10,7 @@ namespace SurveyPlatform.API.Mappings
     {
         public PollDTOMapperProfile()
         {
-            CreateMap<CreatePollRequest, PollModel>();
+            CreateMap<CreatePollRequest, PollModel>(); 
             CreateMap<PollModel, PollDataResponse>();
             CreateMap<PollOptionModel, OptionResponse>(); //варианты для голоса
             CreateMap<PollResponseModel, PollSubmittedResponse>(); //голоса людей

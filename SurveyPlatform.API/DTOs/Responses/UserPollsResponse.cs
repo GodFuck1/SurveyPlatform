@@ -1,10 +1,6 @@
-﻿using SurveyPlatform.DAL.Entities;
-
-namespace SurveyPlatform.DTOs.Responses
+﻿namespace SurveyPlatform.DTOs.Responses;
+public class UserPollsResponse
 {
-    public class UserPollsResponse
-    {
-        public Guid Id { get; set; }
-        public ICollection<PollDataResponse> Polls { get; set; }
-    }
+    public Guid Id { get; set; }
+    public ICollection<PollDataResponse> Polls { get; set; }
 }

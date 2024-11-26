@@ -15,12 +15,14 @@ namespace SurveyPlatform.Controllers
     public class UsersController : Controller
     {
         private readonly UserService _userService;
+        private readonly PollService _pollService;
         private readonly IMapper _mapper;
 
-        public UsersController(UserService userService,IMapper Mapper)
+        public UsersController(UserService userService,IMapper Mapper, PollService pollService)
         {
             _userService = userService;
             _mapper = Mapper;
+            _pollService = pollService;
         }
 
         [AllowAnonymous]
@@ -62,7 +64,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}/responses")]
         public async Task<ActionResult<UserResponsesResponse>> GetUserResponses([FromRoute] Guid id)
         {
-            var users = await _userService.GetUserByIdAsync(id);
+            var users = await _userService.GetUserResponsesByIdAsync(id);
             var userMapped = _mapper.Map<UserResponsesResponse>(users);
             return Ok(userMapped);
         }
@@ -70,7 +72,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}/polls")]
         public async Task<ActionResult<UserPollsResponse>> GetUserPolls([FromRoute] Guid id)
         {
-            var users = await _userService.GetUserByIdAsync(id);
+            var users = await _userService.GetUserPollsByIdAsync(id);
             var userMapped = _mapper.Map<UserPollsResponse>(users);
             return Ok(userMapped);
         }

@@ -1,10 +1,9 @@
-﻿using SurveyPlatform.DAL.Entities;
+﻿using SurveyPlatform.BLL.Models;
 
-namespace SurveyPlatform.DTOs.Responses
+namespace SurveyPlatform.DTOs.Responses;
+
+public class UserResponsesResponse
 {
-    public class UserResponsesResponse
-    {
-        public Guid Id { get; set; }
-        public ICollection<PollResultsResponse> Responses { get; set; }
-    }
+    public Guid Id { get; set; }
+    public ICollection<PollResponseModel> Responses { get; set; }
 }
