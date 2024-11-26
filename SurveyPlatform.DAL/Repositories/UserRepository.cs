@@ -32,9 +32,9 @@ namespace SurveyPlatform.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
-            return _context.Users.Include(p => p.Polls).Include(p => p.Responses).ToList();
+            return await _context.Users.Include(p => p.Polls).Include(p => p.Responses).ToListAsync();
         }
 
         public async Task<User> GetUserById(Guid id)
