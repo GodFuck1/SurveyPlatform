@@ -14,8 +14,8 @@ namespace SurveyPlatform.BLL.Mappings
             CreateMap<UserModel, UserResponse>();
             CreateMap<UserModel, UpdateUserModel>();
             CreateMap<UpdateUserRequest, UpdateUserModel>();
-            CreateMap<UserPolls, UserPollsResponse>();
-            CreateMap<UserResponses, UserResponsesResponse>();
+            CreateMap<UserPollsModel, UserPollsResponse>();
+            CreateMap<UserResponsesModel, UserResponsesResponse>();
             CreateMap<RegisterUserRequest, UserRegisterModel>();
             CreateMap<LoginUserRequest, UserLoginModel>();
         }

@@ -9,8 +9,8 @@ namespace SurveyPlatform.BLL.Mappings
         public UserMapperProfile()
         {
             CreateMap<UserRegisterModel, User>();
-            CreateMap<User, UserResponses>();
-            CreateMap<User, UserPolls>();
+            CreateMap<User, UserResponsesModel>();
+            CreateMap<User, UserPollsModel>();
             CreateMap<User, UserModel>();
             CreateMap<UserModel, User>();
         }

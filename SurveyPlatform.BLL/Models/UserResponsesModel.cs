@@ -1,7 +1,7 @@
 ﻿using SurveyPlatform.DAL.Entities;
 namespace SurveyPlatform.BLL.Models;
-public class UserPolls
+public class UserResponsesModel
 {
     public Guid Id { get; set; }
-    public ICollection<PollModel>? Polls { get; set; }
+    public ICollection<PollResponseModel>? Responses { get; set; }
 }
