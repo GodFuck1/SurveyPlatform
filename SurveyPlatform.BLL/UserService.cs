@@ -30,20 +30,20 @@ namespace SurveyPlatform.BLL
             return userModel;
         }
 
-        public async Task<UserResponses> GetUserResponsesByIdAsync(Guid id)
+        public async Task<UserResponsesModel> GetUserResponsesByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserResponsesById(id);
             if (user == null)
                 throw new EntityNotFoundException($"User {id} not found");
-            var userResponses = _mapper.Map<UserResponses>(user);
+            var userResponses = _mapper.Map<UserResponsesModel>(user);
             return userResponses;
         }
-        public async Task<UserPolls> GetUserPollsByIdAsync(Guid id)
+        public async Task<UserPollsModel> GetUserPollsByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserPollsById(id);
             if (user == null)
                 throw new EntityNotFoundException($"User {id} not found");
-            var userPolls = _mapper.Map<UserPolls>(user);
+            var userPolls = _mapper.Map<UserPollsModel>(user);
             return userPolls;
         }
 
