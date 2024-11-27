@@ -44,6 +44,7 @@ namespace SurveyPlatform
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
+            app.UseMiddleware<DeactivatedUserMiddleware>();
             app.UseAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
 

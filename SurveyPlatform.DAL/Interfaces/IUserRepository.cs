@@ -1,20 +1,13 @@
 ﻿using SurveyPlatform.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SurveyPlatform.DAL.Interfaces
+namespace SurveyPlatform.DAL.Interfaces;
+public interface IUserRepository
 {
-    public interface IUserRepository
-    {
-        Task<User> GetUserById(Guid id);
-        Task<User> GetUserResponsesById(Guid id);
-        Task<User> GetUserPollsById(Guid id);
-        Task<IEnumerable<User>> GetAllUsers();
-        Task<User> CreateUser(User user);
-        Task<User> UpdateUser(User user);
-        Task DeleteUser(Guid id);
-    }
+    Task<User> GetUserById(Guid id);
+    Task<User> GetUserResponsesById(Guid id);
+    Task<User> GetUserPollsById(Guid id);
+    Task<IEnumerable<User>> GetAllUsers();
+    Task<User> CreateUser(User user);
+    Task<User> UpdateUser(User user);
+    Task DeleteUser(Guid id);
+    Task ChangeActivateUser (Guid user);
 }

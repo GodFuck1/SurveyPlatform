@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using SurveyPlatform.API.DTOs.Requests;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.BLL;
-using SurveyPlatform.DTOs.Requests.Validators;
 using SurveyPlatform.DTOs.Responses;
 
 namespace SurveyPlatform.Controllers
 {
     [Route("api/users")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class UsersController : Controller
     {
@@ -92,10 +91,12 @@ namespace SurveyPlatform.Controllers
             return Ok();
         }
 
-        [HttpPatch("{id}/deactivate")]
-        public IActionResult DeactivateUser([FromRoute] Guid id)
+        [HttpPatch("{id}/reactivate")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> ReActivateUser([FromRoute] Guid id)
         {
-            return NoContent();
+            await _userService.ChangeUserActivated(id);
+            return Ok();
         }
     }
 }

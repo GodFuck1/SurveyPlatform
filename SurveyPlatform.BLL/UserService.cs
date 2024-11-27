@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SurveyPlatform.BLL.Exceptions;
+using SurveyPlatform.BLL.Helpers;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
@@ -63,7 +64,7 @@ namespace SurveyPlatform.BLL
                 throw new EntityConflictException("Email have already been used");
             }
                 
-            userModel.Password = HashPassword(userModel.Password);
+            userModel.Password = UserHelper.HashPassword(userModel.Password);
             var user = _mapper.Map<User>(userModel);
             user.Created = DateTime.UtcNow;
             var createdUser = await _userRepository.CreateUser(user);
@@ -76,54 +77,59 @@ namespace SurveyPlatform.BLL
             var users = await _userRepository.GetAllUsers();
             var user = users.FirstOrDefault(u => u.Email == userModel.Email);
             if (user == null)
-                throw new EntityNotFoundException($"User {user.Id} not found");
-            if (!VerifyPassword(userModel.Password, user.Password))
+                throw new EntityNotFoundException($"User {userModel.Email} not found");
+            if (!UserHelper.VerifyPassword(userModel.Password, user.Password))
             {
                 return string.Empty;
             }
-
             var token = _tokenService.GenerateToken(user);
-
             return token;
         }
+        /// <summary>
+        /// Обновить пользователя
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <param name="updateUserModel">Тело обновления</param>
+        /// <returns>UserModel</returns>
+        /// <exception cref="EntityNotFoundException">Пользователь не найден</exception>
+        /// <exception cref="AccessViolationException">Пароль неправильный</exception>
         public async Task<UserModel> UpdateUserAsync(Guid id,UpdateUserModel updateUserModel)
         {
             var user = await _userRepository.GetUserById(id);
             if (user == null)
                 throw new EntityNotFoundException($"User {id} not found");
-            if (!VerifyPassword(updateUserModel.Password, user.Password))
-                throw new EntityConflictException("Wrong password");
+            if (!UserHelper.VerifyPassword(updateUserModel.Password, user.Password))
+                throw new AccessViolationException("Wrong password");
             user.Name = updateUserModel.Name;
             var updatedUser = await _userRepository.UpdateUser(user);
             var mappedUser = _mapper.Map<UserModel>(updatedUser);
             return mappedUser;
         }
-
+        /// <summary>
+        /// Активировать/деактивировать аккаунт пользователя
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <returns></returns>
+        /// <exception cref="EntityNotFoundException">Пользователь не найден</exception>
+        public async Task ChangeUserActivated(Guid id)
+        {
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+                throw new EntityNotFoundException($"User {id} not found");
+            await _userRepository.ChangeActivateUser(id);
+        }
+        /// <summary>
+        /// Удалить пользователя
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <returns></returns>
+        /// <exception cref="EntityNotFoundException">Пользователь не найден</exception>
         public async Task DeleteUserAsync(Guid id)
         {
             var user = await _userRepository.GetUserById(id);
             if (user == null)
                 throw new EntityNotFoundException($"User {id} not found");
             await _userRepository.DeleteUser(id);
-        }
-
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
-        private bool VerifyPassword(string inputPassword, string hashedPassword)
-        {
-            var hashedInputPassword = HashPassword(inputPassword);
-            return hashedInputPassword == hashedPassword;
         }
     }
 }

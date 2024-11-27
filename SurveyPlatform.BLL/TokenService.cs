@@ -41,7 +41,8 @@ namespace SurveyPlatform.BLL
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.AuthorizationDecision , user.IsDeactivated.ToString())
             };
             foreach(var role in user.Roles)
             {
