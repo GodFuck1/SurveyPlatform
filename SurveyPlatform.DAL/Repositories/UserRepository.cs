@@ -34,7 +34,8 @@ public class UserRepository : IUserRepository
             {
                 foreach (var poll in userToDelete.Polls)
                 {
-                    var responsesToDelete = await _context.PollResponses //все ответы, связанные с опросами пользователя
+                    //все ответы, связанные с опросами пользователя
+                    var responsesToDelete = await _context.PollResponses 
                         .Where(r => r.PollId == poll.Id)
                         .ToListAsync();
                     _context.PollResponses.RemoveRange(responsesToDelete);
