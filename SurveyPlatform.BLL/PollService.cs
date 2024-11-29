@@ -50,15 +50,15 @@ public class PollService
         return createdPoll;
     }
 
-    public async Task<PollModel> UpdatePollAsync(UpdatePollModel updatePoll)
+    public async Task<PollModel> UpdatePollAsync(Guid pollId, UpdatePollModel updatePoll)
     {
-        var poll = await _pollRepository.GetPollByIdAsync(updatePoll.PollId);
+        var poll = await _pollRepository.GetPollByIdAsync(pollId);
         if (poll == null)
-            throw new EntityNotFoundException($"Poll {updatePoll.PollId} not found");
+            throw new EntityNotFoundException($"Poll {pollId} not found");
         poll.Title = updatePoll.Title;
         poll.Description = updatePoll.Description;
         await _pollRepository.UpdatePollAsync(poll);
-        poll = await _pollRepository.GetPollByIdAsync(updatePoll.PollId);
+        poll = await _pollRepository.GetPollByIdAsync(pollId);
         var pollMapped = await GetPollByIdAsync(poll.Id);
         return pollMapped;
     }
