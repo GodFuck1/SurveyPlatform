@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SurveyPlatform.API.DTOs.Requests;
 using SurveyPlatform.BLL.Models;
-using SurveyPlatform.BLL;
+using SurveyPlatform.BLL.Services;
 using SurveyPlatform.DTOs.Responses;
 
 namespace SurveyPlatform.Controllers
@@ -11,23 +11,18 @@ namespace SurveyPlatform.Controllers
     [Route("api/users")]
     [Authorize]
     [ApiController]
-    public class UsersController : Controller
+    public class UsersController(
+            UserService userService, 
+            IMapper mapper
+        ) : Controller
     {
-        private readonly UserService _userService;
-        private readonly IMapper _mapper;
-
-        public UsersController(UserService userService,IMapper Mapper)
-        {
-            _userService = userService;
-            _mapper = Mapper;
-        }
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UserResponse>> Register([FromBody] RegisterUserRequest request)
         {
-            var newUserData = _mapper.Map<RegisterUserRequest, UserRegisterModel>(request);
-            var userResponse = await _userService.RegisterUserAsync(newUserData);
+            var newUserData = mapper.Map<RegisterUserRequest, UserRegisterModel>(request);
+            var userResponse = await userService.RegisterUserAsync(newUserData);
             if (userResponse != null) return Ok(userResponse);
             else return Conflict("Email already has in DB");
         }
@@ -36,8 +31,8 @@ namespace SurveyPlatform.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login([FromBody] LoginUserRequest request)
         {
-            var userModel = _mapper.Map<LoginUserRequest, UserLoginModel>(request);
-            var loginResponse = await _userService.LoginUserAsync(userModel);
+            var userModel = mapper.Map<LoginUserRequest, UserLoginModel>(request);
+            var loginResponse = await userService.LoginUserAsync(userModel);
             if (loginResponse == string.Empty) return Unauthorized("Email Or Password Is Incorrect");
             return Ok(loginResponse);
         }
@@ -45,41 +40,41 @@ namespace SurveyPlatform.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserResponse>>> GetUsers()
         {
-            var users = await _userService.GetAllUsers();
-            var allUsers = _mapper.Map<List<UserResponse>>(users);
+            var users = await userService.GetAllUsers();
+            var allUsers = mapper.Map<List<UserResponse>>(users);
             return Ok(allUsers);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponse>> GetUserByID([FromRoute] Guid id)
         {
-            var users = await _userService.GetUserByIdAsync(id);
-            var userMapped = _mapper.Map<UserResponse>(users);
+            var users = await userService.GetUserByIdAsync(id);
+            var userMapped = mapper.Map<UserResponse>(users);
             return Ok(userMapped);
         }
 
         [HttpGet("{id}/responses")]
         public async Task<ActionResult<UserResponsesResponse>> GetUserResponses([FromRoute] Guid id)
         {
-            var users = await _userService.GetUserResponsesByIdAsync(id);
-            var userMapped = _mapper.Map<UserResponsesResponse>(users);
+            var users = await userService.GetUserResponsesByIdAsync(id);
+            var userMapped = mapper.Map<UserResponsesResponse>(users);
             return Ok(userMapped);
         }
 
         [HttpGet("{id}/polls")]
         public async Task<ActionResult<UserPollsResponse>> GetUserPolls([FromRoute] Guid id)
         {
-            var users = await _userService.GetUserPollsByIdAsync(id);
-            var userMapped = _mapper.Map<UserPollsResponse>(users);
+            var users = await userService.GetUserPollsByIdAsync(id);
+            var userMapped = mapper.Map<UserPollsResponse>(users);
             return Ok(userMapped);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<UserResponse>> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
         {
-            var userMapped = _mapper.Map<UpdateUserModel>(request);
-            var updatedUser = await _userService.UpdateUserAsync(id,userMapped);
-            var updatedUserMapped = _mapper.Map<UserResponse>(updatedUser);
+            var userMapped = mapper.Map<UpdateUserModel>(request);
+            var updatedUser = await userService.UpdateUserAsync(id,userMapped);
+            var updatedUserMapped = mapper.Map<UserResponse>(updatedUser);
             return Ok(updatedUserMapped);
         }
 
@@ -87,7 +82,7 @@ namespace SurveyPlatform.Controllers
         [Authorize(Roles ="Admin")]
         public async Task<ActionResult> DeleteUser([FromRoute] Guid id)
         {
-            await _userService.DeleteUserAsync(id);
+            await userService.DeleteUserAsync(id);
             return Ok();
         }
 
@@ -95,7 +90,7 @@ namespace SurveyPlatform.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ReActivateUser([FromRoute] Guid id)
         {
-            await _userService.ChangeUserActivated(id);
+            await userService.ChangeUserActivated(id);
             return Ok();
         }
     }

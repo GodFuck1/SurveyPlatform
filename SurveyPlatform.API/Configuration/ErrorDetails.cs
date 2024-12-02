@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 
 namespace SurveyPlatform.API.Configuration;
-
 public class ErrorDetails
 {
     public int StatusCode { get; set; }

@@ -1,26 +1,19 @@
 ﻿using AutoMapper;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SurveyPlatform.BLL.Mappings
+namespace SurveyPlatform.BLL.Mappings;
+public class PollMapperProfile : Profile
 {
-    public class PollMapperProfile : Profile
+    public PollMapperProfile()
     {
-        public PollMapperProfile()
-        {
-            CreateMap<PollModel, Poll>();
-            CreateMap<SubmitResponseModel, PollResponse>();
-            CreateMap<Poll, PollModel > ();
-            CreateMap<string, PollOptionModel>()
-            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src));
-            CreateMap<PollOptionModel, PollOption>();
-            CreateMap<PollOption, PollOptionModel>();
-            CreateMap<PollResponse, PollResponseModel>();
-        }
+        CreateMap<PollModel, Poll>();
+        CreateMap<SubmitResponseModel, PollResponse>();
+        CreateMap<Poll, PollModel > ();
+        CreateMap<string, PollOptionModel>()
+        .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src));
+        CreateMap<PollOptionModel, PollOption>();
+        CreateMap<PollOption, PollOptionModel>();
+        CreateMap<PollResponse, PollResponseModel>();
     }
 }

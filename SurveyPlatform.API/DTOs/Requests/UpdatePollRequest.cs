@@ -1,5 +1,4 @@
 ﻿namespace SurveyPlatform.API.DTOs.Requests;
-
 public class UpdatePollRequest
 {
     public string Title { get; set; }

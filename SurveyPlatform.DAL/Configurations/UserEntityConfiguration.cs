@@ -2,7 +2,6 @@
 using SurveyPlatform.DAL.Entities;
 
 namespace SurveyPlatform.DAL.Configurations;
-
 internal static class UserEntityConfiguration
 {
     internal static void ConfigureUserEntity(this ModelBuilder modelBuilder)

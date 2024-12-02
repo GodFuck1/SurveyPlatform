@@ -1,5 +1,4 @@
 ﻿namespace SurveyPlatform.BLL.Models;
-
 public class UserRegisterModel
 {
     public string Name { get; set; }
