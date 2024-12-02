@@ -5,10 +5,10 @@ using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
 
-namespace SurveyPlatform.BLL;
+namespace SurveyPlatform.BLL.Services;
 public class UserService(
-        IUserRepository userRepository, 
-        IMapper mapper, 
+        IUserRepository userRepository,
+        IMapper mapper,
         TokenService tokenService
     )
 {
@@ -53,7 +53,7 @@ public class UserService(
         {
             throw new EntityConflictException("Email have already been used");
         }
-            
+
         userModel.Password = UserHelper.HashPassword(userModel.Password);
         var user = mapper.Map<User>(userModel);
         user.Created = DateTime.UtcNow;
@@ -83,7 +83,7 @@ public class UserService(
     /// <returns>UserModel</returns>
     /// <exception cref="EntityNotFoundException">Пользователь не найден</exception>
     /// <exception cref="AccessViolationException">Пароль неправильный</exception>
-    public async Task<UserModel> UpdateUserAsync(Guid id,UpdateUserModel updateUserModel)
+    public async Task<UserModel> UpdateUserAsync(Guid id, UpdateUserModel updateUserModel)
     {
         var user = await userRepository.GetUserById(id);
         if (user == null)

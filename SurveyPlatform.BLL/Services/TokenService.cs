@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace SurveyPlatform.BLL;
+namespace SurveyPlatform.BLL.Services;
 public class TokenService(
         IConfiguration configuration
     )
@@ -34,7 +34,7 @@ public class TokenService(
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.AuthorizationDecision , user.IsDeactivated.ToString())
         };
-        foreach(var role in user.Roles)
+        foreach (var role in user.Roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
