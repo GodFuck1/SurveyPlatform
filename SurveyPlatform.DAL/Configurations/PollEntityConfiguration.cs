@@ -2,7 +2,6 @@
 using SurveyPlatform.DAL.Entities;
 
 namespace SurveyPlatform.DAL.Configurations;
-
 internal static class PollEntityConfiguration
 {
     internal static void ConfigurePollEntity(this ModelBuilder modelBuilder)

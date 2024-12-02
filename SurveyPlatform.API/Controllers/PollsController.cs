@@ -13,7 +13,10 @@ namespace SurveyPlatform.Controllers
     [Route("api/polls")]
     [Authorize]
     [ApiController]
-    public class PollsController(PollService pollService, IMapper mapper) : ControllerBase
+    public class PollsController(
+            PollService pollService, 
+            IMapper mapper
+        ) : ControllerBase
     {
         /// <summary>
         /// Получение списка опросов (без результатов)

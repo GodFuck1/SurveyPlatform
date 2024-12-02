@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using SurveyPlatform.BLL.Exceptions;
+﻿using SurveyPlatform.BLL.Exceptions;
 using System.Net;
 
 namespace SurveyPlatform.API.Configuration;
-
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;

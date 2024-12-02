@@ -1,5 +1,4 @@
 ﻿namespace SurveyPlatform.DAL.Entities;
-
 public class Poll
 {
     public Guid Id { get; set; }

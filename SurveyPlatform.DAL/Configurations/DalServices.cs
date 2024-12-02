@@ -3,7 +3,6 @@ using SurveyPlatform.DAL.Interfaces;
 using SurveyPlatform.DAL.Repositories;
 
 namespace SurveyPlatform.DAL.Configurations;
-
 public static class DalServices
 {
     public static void ConfigureDalServices(this IServiceCollection services)

@@ -3,7 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace SurveyPlatform.API.Configuration;
-
 internal static class AddAuthConfiguration
 {
     internal static void AddAuth(this WebApplicationBuilder builder) 

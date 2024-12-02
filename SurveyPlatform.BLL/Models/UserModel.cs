@@ -1,7 +1,5 @@
 ﻿using SurveyPlatform.DAL.Entities;
-
 namespace SurveyPlatform.BLL.Models;
-
 public class UserModel
 {
     public Guid Id { get; set; }

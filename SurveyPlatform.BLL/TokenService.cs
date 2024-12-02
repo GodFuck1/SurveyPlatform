@@ -1,54 +1,43 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SurveyPlatform.DAL.Entities;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace SurveyPlatform.BLL
+namespace SurveyPlatform.BLL;
+public class TokenService(
+        IConfiguration configuration
+    )
 {
-    public class TokenService
+    public string GenerateToken(User user)
     {
-        private readonly IConfiguration _configuration;
-
-        public TokenService(IConfiguration configuration)
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
-            _configuration = configuration;
-        }
-
-        public string GenerateToken(User user)
+            Subject = new ClaimsIdentity(CreateClaims(user)),
+            Expires = DateTime.UtcNow.AddHours(1),
+            Issuer = configuration["Jwt:Issuer"],
+            Audience = configuration["Jwt:Audience"],
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+    private IEnumerable<Claim> CreateClaims(User user)
+    {
+        var claims = new List<Claim>
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(GetClaims(user)),
-                Expires = DateTime.UtcNow.AddHours(1),
-                Issuer = _configuration["Jwt:Issuer"],
-                Audience = _configuration["Jwt:Audience"],
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
-        private IEnumerable<Claim> GetClaims(User user)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.AuthorizationDecision , user.IsDeactivated.ToString())
+        };
+        foreach(var role in user.Roles)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.AuthorizationDecision , user.IsDeactivated.ToString())
-            };
-            foreach(var role in user.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-            return claims;
+            claims.Add(new Claim(ClaimTypes.Role, role));
         }
+        return claims;
     }
 }

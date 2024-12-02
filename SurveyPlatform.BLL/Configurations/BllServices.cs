@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
 namespace SurveyPlatform.BLL.Configurations;
-
 public static class BllServices
 {
     public static void ConfigureBllServices(this IServiceCollection services)

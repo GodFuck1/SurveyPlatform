@@ -4,28 +4,23 @@ using SurveyPlatform.DAL.Interfaces;
 using SurveyPlatform.DAL.Data;
 
 namespace SurveyPlatform.DAL.Repositories;
-public class UserRepository : IUserRepository
+public class UserRepository(
+        ApplicationDbContext context
+    ) : IUserRepository
 {
-    private readonly ApplicationDbContext _context;
-    public UserRepository(ApplicationDbContext context) 
-    {
-        _context = context;
-    }
-
-
     public async Task<User> CreateUser(User user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
         return await GetUserById(user.Id);
     }
 
     public async Task DeleteUser(Guid id)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
-            var userToDelete = await _context.Users
+            var userToDelete = await context.Users
                 .Include(u => u.Polls)
                 .ThenInclude(p => p.Responses)
                 .Include(u => u.Responses)
@@ -35,15 +30,15 @@ public class UserRepository : IUserRepository
                 foreach (var poll in userToDelete.Polls)
                 {
                     //все ответы, связанные с опросами пользователя
-                    var responsesToDelete = await _context.PollResponses 
+                    var responsesToDelete = await context.PollResponses 
                         .Where(r => r.PollId == poll.Id)
                         .ToListAsync();
-                    _context.PollResponses.RemoveRange(responsesToDelete);
+                    context.PollResponses.RemoveRange(responsesToDelete);
                 }
-                _context.Polls.RemoveRange(userToDelete.Polls);//все опросы пользователя
-                _context.PollResponses.RemoveRange(userToDelete.Responses);//все ответы пользователя
-                _context.Users.Remove(userToDelete);
-                await _context.SaveChangesAsync();
+                context.Polls.RemoveRange(userToDelete.Polls);//все опросы пользователя
+                context.PollResponses.RemoveRange(userToDelete.Responses);//все ответы пользователя
+                context.Users.Remove(userToDelete);
+                await context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
         }
@@ -58,30 +53,30 @@ public class UserRepository : IUserRepository
     {
         var user = await GetUserById(id);
         user.IsDeactivated = !user.IsDeactivated;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<User>> GetAllUsers()
     {
-        return await _context.Users.Include(p => p.Polls).Include(p => p.Responses).ToListAsync();
+        return await context.Users.Include(p => p.Polls).Include(p => p.Responses).ToListAsync();
     }
 
     public async Task<User> GetUserById(Guid id)
     {
-        return await _context.Users.
+        return await context.Users.
             FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User> GetUserPollsById(Guid id)
     {
-        return await _context.Users.
+        return await context.Users.
             Include(p => p.Polls).
             FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User> GetUserResponsesById(Guid id)
     {
-        return await _context.Users.
+        return await context.Users.
             Include(p => p.Responses).
             FirstOrDefaultAsync(u => u.Id == id);
     }
@@ -92,7 +87,7 @@ public class UserRepository : IUserRepository
         if (existingUser != null)
         {
             existingUser.Name = user.Name;
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return await GetUserById(user.Id);
         }
         else return null;
