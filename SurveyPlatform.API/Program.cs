@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using SurveyPlatform.DTOs.Requests.Validators;
 using SurveyPlatform.DAL.Data;
 using SurveyPlatform.API.Configuration;
-using System.Text.Json.Serialization;
+using SurveyPlatform.DAL.Configurations;
+using SurveyPlatform.BLL.Configurations;
 
 namespace SurveyPlatform
 {
@@ -16,38 +17,29 @@ namespace SurveyPlatform
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddCommandLine(args)
+                .AddEnvironmentVariables()
+                .Build();
 
-            builder.Services.AddControllers();
-            builder.Services.AddFluentValidationAutoValidation();
-            builder.Services.AddValidatorsFromAssemblyContaining<CreatePollRequestValidator>();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-            );
-
-            builder.AddAuth(); //авторизация по jwt токену
+           
+            builder.Services.ConfigureApiServices(builder.Configuration); //сервисы для API
+            builder.AddAuth(); //конфигурация авторизации по jwt токену
             builder.Services.AddMappers(); //мапперы
-            builder.Services.AddCustomServices(); //кастомные сервисы и репозитории
-            
+            builder.Services.ConfigureDalServices(); //сервисы для DAL
+            builder.Services.ConfigureBllServices(); //сервисы для BLL
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
+            app.UseSwagger();
+            app.UseSwaggerUI();
             app.UseHttpsRedirection();
-
             app.UseAuthentication();
             app.UseMiddleware<DeactivatedUserMiddleware>();
             app.UseAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
-
             app.MapControllers();
 
             app.Run();
