@@ -8,7 +8,5 @@ internal static class AddMappersConfiguration
     {
         services.AddAutoMapper(typeof(UserMapperProfile));
         services.AddAutoMapper(typeof(UserDTOMapperProfile));
-        services.AddAutoMapper(typeof(PollMapperProfile));
-
     }
 }
