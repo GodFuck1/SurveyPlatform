@@ -1,15 +1,18 @@
-﻿using System.Security.Cryptography;
+﻿using SurveyPlatform.BLL.Exceptions;
+using SurveyPlatform.DAL.Entities;
+using SurveyPlatform.DAL.Interfaces;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SurveyPlatform.BLL.Helpers;
-internal static class UserHelper
+public static class UserHelper
 {
     /// <summary>
     /// Хэш string в SHA256
     /// </summary>
     /// <param name="password">Исходный текст</param>
     /// <returns>Хэш текста</returns>
-    internal static string HashPassword(string password)
+    public static string HashPassword(string password)
     {
         using (SHA256 sha256Hash = SHA256.Create())
         {
@@ -28,9 +31,23 @@ internal static class UserHelper
     /// <param name="inputPassword">Исходный пароль</param>
     /// <param name="hashedPassword">Хэшированный пароль</param>
     /// <returns></returns>
-    internal static bool VerifyPassword(string inputPassword, string hashedPassword)
+    public static bool VerifyPassword(string inputPassword, string hashedPassword)
     {
         var hashedInputPassword = HashPassword(inputPassword);
         return hashedInputPassword == hashedPassword;
+    }
+    /// <summary>
+    /// Найти пользователя по ID
+    /// </summary>
+    /// <param name="userRepository">UserRepository</param>
+    /// <param name="id">userId</param>
+    /// <returns>User</returns>
+    /// <exception cref="EntityNotFoundException">User not found</exception>
+    public static async Task<User> FindUserByIdAsync(IUserRepository userRepository, Guid id)
+    {
+        var user = await userRepository.GetUserById(id);
+        if (user == null)
+            throw new EntityNotFoundException($"User {id} not found");
+        return user;
     }
 }

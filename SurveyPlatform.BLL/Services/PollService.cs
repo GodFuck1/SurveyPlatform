@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using SurveyPlatform.BLL.Exceptions;
 using SurveyPlatform.BLL.Helpers;
+using SurveyPlatform.BLL.Interfaces;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
@@ -11,8 +12,8 @@ public class PollService(
         IMapper mapper,
         IHttpContextAccessor httpContextAccessor,
         IOptionRepository optionRepository,
-        UserService userService
-    )
+        IUserService userService
+    ) : IPollService
 {
     public async Task<PollModel> GetPollByIdAsync(Guid id)
     {

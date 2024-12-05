@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SurveyPlatform.BLL.Interfaces;
 using SurveyPlatform.DAL.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,7 +9,7 @@ using System.Text;
 namespace SurveyPlatform.BLL.Services;
 public class TokenService(
         IConfiguration configuration
-    )
+    ) : ITokenService
 {
     public string GenerateToken(User user)
     {

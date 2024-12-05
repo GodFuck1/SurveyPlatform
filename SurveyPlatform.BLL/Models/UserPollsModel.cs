@@ -2,5 +2,5 @@
 public class UserPollsModel
 {
     public Guid Id { get; set; }
-    public ICollection<PollModel>? Polls { get; set; }
+    public ICollection<PollModel> Polls { get; set; } = [];
 }

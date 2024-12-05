@@ -40,7 +40,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserResponse>>> GetUsers()
         {
-            var users = await userService.GetAllUsers();
+            var users = await userService.GetAllUsersAsync();
             var allUsers = mapper.Map<List<UserResponse>>(users);
             return Ok(allUsers);
         }
