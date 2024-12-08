@@ -40,7 +40,7 @@ public class UserService(
     public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
     {
         var users = await userRepository.GetAllUsersAsync();
-        var usersResponses = mapper.Map<IList<UserModel>>(users);
+        var usersResponses = mapper.Map<IEnumerable<UserModel>>(users);
         return usersResponses;
     }
 
@@ -63,10 +63,7 @@ public class UserService(
 
     public async Task<string> LoginUserAsync(UserLoginModel userModel)
     {
-        var users = await userRepository.GetAllUsersAsync();
-        var user = users.FirstOrDefault(u => u.Email == userModel.Email);
-        if (user == null)
-            throw new EntityNotFoundException($"User {userModel.Email} not found");
+        var user = await UserHelper.FindUserByEmailAsync(userRepository, userModel.Email);
         if (!UserHelper.VerifyPassword(userModel.Password, user.Password))
         {
             return string.Empty;
@@ -98,9 +95,13 @@ public class UserService(
     /// <param name="id">Id пользователя</param>
     /// <returns></returns>
     /// <exception cref="EntityNotFoundException">Пользователь не найден</exception>
-    public async Task ChangeUserActivated(Guid id)
+    public async Task ChangeUserActivatedAsync(Guid id)
     {
         var user = await UserHelper.FindUserByIdAsync(userRepository, id);
+        if (user.Roles.Contains("Admin"))
+        {
+            throw new InvalidOperationException($"Cannot change activation status of an admin user[{id}].");
+        }
         await userRepository.ChangeActivateUserAsync(id);
     }
     /// <summary>
@@ -112,6 +113,10 @@ public class UserService(
     public async Task DeleteUserAsync(Guid id)
     {
         var user = await UserHelper.FindUserByIdAsync(userRepository, id);
+        if (user.Roles.Contains("Admin"))
+        {
+            throw new InvalidOperationException($"User {id} cannot be deleted because he has admin role.");
+        }
         await userRepository.DeleteUserAsync(id);
     }
 }

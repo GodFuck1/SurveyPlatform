@@ -2,7 +2,8 @@
 namespace SurveyPlatform.DAL.Interfaces;
 public interface IUserRepository
 {
-    Task<User?> GetUserById(Guid id);
+    Task<User?> GetUserByIdAsync(Guid id);
+    Task<User?> GetUserByEmailAsync(string email);
     Task<User?> GetUserResponsesByIdAsync(Guid id);
     Task<User?> GetUserPollsByIdAsync(Guid id);
     Task<IEnumerable<User>> GetAllUsersAsync();

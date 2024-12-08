@@ -36,6 +36,7 @@ public static class UserHelper
         var hashedInputPassword = HashPassword(inputPassword);
         return hashedInputPassword == hashedPassword;
     }
+    
     /// <summary>
     /// Найти пользователя по ID
     /// </summary>
@@ -45,9 +46,24 @@ public static class UserHelper
     /// <exception cref="EntityNotFoundException">User not found</exception>
     public static async Task<User> FindUserByIdAsync(IUserRepository userRepository, Guid id)
     {
-        var user = await userRepository.GetUserById(id);
+        var user = await userRepository.GetUserByIdAsync(id);
         if (user == null)
             throw new EntityNotFoundException($"User {id} not found");
+        return user;
+    }
+
+    /// <summary>
+    /// Найти пользователя по Email
+    /// </summary>
+    /// <param name="userRepository">UserRepository</param>
+    /// <param name="id">userId</param>
+    /// <returns>User</returns>
+    /// <exception cref="EntityNotFoundException">User not found</exception>
+    public static async Task<User> FindUserByEmailAsync(IUserRepository userRepository, string Email)
+    {
+        var user = await userRepository.GetUserByEmailAsync(Email);
+        if (user == null)
+            throw new EntityNotFoundException($"User {Email} not found");
         return user;
     }
 }
