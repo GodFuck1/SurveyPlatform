@@ -115,13 +115,33 @@ namespace SurveyPlatform.BLL.Tests
         }
 
         [Fact]
-        public async Task CreatePollAsync_ValidPollModelSend_ReturnsCreatedPoll()
+        public async Task CreatePollAsync_UserDoesNotExistSend_ReturnsCreatedPoll()
         {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var message = $"User {userId} not found";
+            var newPollModel = new PollModel
+            {
+                Title = "Test Poll",
+                Description = "Test Description",
+                AuthorID = userId
+            };
+            // Act
+            var exception = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _sut.CreatePollAsync(newPollModel));
+            // Assert
+            Assert.Equal(message, exception.Message);
+        }
+
+        [Fact]
+        public async Task CreatePollAsync_UserExistAndPollValidSend_ReturnsCreatedPoll()
+        {
+            var userId = Guid.NewGuid();
             // Arrange
             var pollModel = new PollModel
             {
                 Title = "Test Poll",
-                Description = "Test Description"
+                Description = "Test Description",
+                AuthorID = userId
             };
 
             var pollEntity = new Poll
@@ -129,9 +149,14 @@ namespace SurveyPlatform.BLL.Tests
                 Id = Guid.NewGuid(),
                 Title = "Test Poll",
                 Description = "Test Description",
+                AuthorID = userId,
                 CreatedAt = DateTime.UtcNow
             };
-
+            var user = new User()
+            {
+                Id = userId
+            };
+            _userRepositoryMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
             _pollRepositoryMock.Setup(r => r.CreatePollAsync(It.IsAny<Poll>())).ReturnsAsync(pollEntity);
 
             // Act

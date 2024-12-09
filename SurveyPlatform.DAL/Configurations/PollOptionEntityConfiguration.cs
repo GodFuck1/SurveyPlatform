@@ -21,7 +21,8 @@ internal static class PollOptionEntityConfiguration
         modelBuilder.Entity<PollOption>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Content).IsRequired();
+            entity.Property(e => e.Content).IsRequired()
+                .HasMaxLength(200);
             entity.Property(e => e.PollId).IsRequired();
         });
     }
