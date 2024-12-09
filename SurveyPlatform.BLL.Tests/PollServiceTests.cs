@@ -497,11 +497,11 @@ namespace SurveyPlatform.BLL.Tests
                 Id = pollId,
                 Responses = new List<PollResponse>()
             };
-            _pollRepositoryMock.Setup(t => t.GetPollByIdAsync(pollId)).ReturnsAsync(poll);
+            _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(pollId)).ReturnsAsync(poll);
             var mappedPoll = _mapper.Map<PollModel>(poll);
 
             // Act
-            var result = await _sut.GetPollByIdAsync(pollId);
+            var result = await _sut.GetResponsesByPollIdAsync(pollId);
 
             // Assert
             Assert.Equivalent(mappedPoll, result);
@@ -517,11 +517,11 @@ namespace SurveyPlatform.BLL.Tests
                 Id = pollId,
                 Responses = new List<PollResponse>() { new PollResponse(), new PollResponse() }
             };
-            _pollRepositoryMock.Setup(t => t.GetPollByIdAsync(pollId)).ReturnsAsync(poll);
+            _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(pollId)).ReturnsAsync(poll);
             var mappedPoll = _mapper.Map<PollModel>(poll);
 
             // Act
-            var result = await _sut.GetPollByIdAsync(pollId);
+            var result = await _sut.GetResponsesByPollIdAsync(pollId);
 
             // Assert
             Assert.NotNull(result);
