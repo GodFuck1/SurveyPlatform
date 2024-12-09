@@ -8,11 +8,6 @@ using SurveyPlatform.BLL.Services;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
 using SurveyPlatform.BLL.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace SurveyPlatform.BLL.Tests
 {
@@ -431,7 +426,11 @@ namespace SurveyPlatform.BLL.Tests
             _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(existPoll.Id)).ReturnsAsync(existPoll);
             _optionRepositoryMock.Setup(t => t.GetOptionByIdAsync(optionId)).ReturnsAsync(option);
             _userServiceMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
-            _pollRepositoryMock.Setup(t => t.AddPollResponseAsync(It.IsAny<PollResponse>())).ReturnsAsync(respondedPoll);
+            _pollRepositoryMock.Setup(t => t.AddPollResponseAsync(It.Is<PollResponse>(r =>
+                r.PollId == pollResponse.PollId &&
+                r.OptionId == pollResponse.OptionId &&
+                r.UserId == pollResponse.UserId)))
+                .ReturnsAsync(respondedPoll);
             var mappedPollModel = _mapper.Map<PollModel>(respondedPoll);
 
             // Act
@@ -441,7 +440,10 @@ namespace SurveyPlatform.BLL.Tests
             Assert.NotNull(result);
             Assert.Equal(mappedPollModel.Title, result.Title);
             Assert.True(result.Responses.Count > existPoll.Responses.Count);
-            _pollRepositoryMock.Verify(t => t.AddPollResponseAsync(It.IsAny<PollResponse>()), Times.Once);
+            _pollRepositoryMock.Verify(t => t.AddPollResponseAsync(It.Is<PollResponse>(r =>
+                r.PollId == pollResponse.PollId &&
+                r.OptionId == pollResponse.OptionId &&
+                r.UserId == pollResponse.UserId)), Times.Once);
             _pollRepositoryMock.Verify(t => t.GetPollWithResponsesAsync(existPoll.Id), Times.Once);
             _optionRepositoryMock.Verify(t => t.GetOptionByIdAsync(optionId), Times.Once);
             _userServiceMock.Verify(t => t.GetUserByIdAsync(userId), Times.Once);
