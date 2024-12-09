@@ -20,9 +20,17 @@ internal static class UserEntityConfiguration
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Email).IsRequired();
-            entity.Property(e => e.Password).IsRequired();
-            entity.Property(e => e.Roles).IsRequired();
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(30);
+            entity.Property(e => e.Email)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Password)
+                .IsRequired()
+                .HasMaxLength(64);
+            entity.Property(e => e.Roles)
+                .IsRequired();
             entity.Property(e => e.Created).IsRequired();
             entity.Property(e => e.Updated).IsRequired();
             entity.Property(e => e.LastLoggedIn).IsRequired();

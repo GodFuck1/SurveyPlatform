@@ -8,11 +8,13 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Имя обязательно для заполнения.")
-            .MinimumLength(2).WithMessage("Длина имени должна быть больше 2 символов.");
+            .MinimumLength(2).WithMessage("Длина имени должна быть больше 2 символов.")
+            .MaximumLength(30).WithMessage("Максимальная длина имени - 30 символов.");
 
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Почта обязательна для заполнения.")
-            .EmailAddress().WithMessage("Почта указана неверно.");
+            .EmailAddress().WithMessage("Почта указана неверно.")
+            .MaximumLength(50).WithMessage("Максимальная длина почты - 50 символов.");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Пароль обязателен для заполнения.")
