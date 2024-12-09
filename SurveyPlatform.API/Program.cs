@@ -1,6 +1,7 @@
 using SurveyPlatform.API.Configuration;
 using SurveyPlatform.DAL.Configurations;
 using SurveyPlatform.BLL.Configurations;
+using Microsoft.OpenApi.Models;
 
 namespace SurveyPlatform;
 public class Program
@@ -22,7 +23,6 @@ public class Program
         builder.Services.AddMappers(); //мапперы
         builder.Services.ConfigureDalServices(); //сервисы для DAL
         builder.Services.ConfigureBllServices(); //сервисы для BLL
-
         var app = builder.Build();
 
         app.UseSwagger();

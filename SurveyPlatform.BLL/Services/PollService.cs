@@ -12,14 +12,13 @@ public class PollService(
         IMapper mapper,
         IHttpContextAccessor httpContextAccessor,
         IOptionRepository optionRepository,
-        IUserService userService
+        IUserService userService,
+        IJwtHelper jwtHelper
     ) : IPollService
 {
     public async Task<PollModel> GetPollByIdAsync(Guid id)
     {
-        var poll = await pollRepository.GetPollByIdAsync(id);
-        if (poll == null)
-            throw new EntityNotFoundException($"Poll {id} not found");
+        var poll = await PollHelper.FindPollByIdAsync(pollRepository, id);
         var pollMapped = mapper.Map<PollModel>(poll);
         return pollMapped;
     }
@@ -35,41 +34,45 @@ public class PollService(
     {
         var pollEntity = mapper.Map<Poll>(poll);
         pollEntity.CreatedAt = DateTime.UtcNow;
-        await pollRepository.CreatePollAsync(pollEntity);
-        var createdPoll = await GetPollByIdAsync(pollEntity.Id);
-        return createdPoll;
+        var createdPoll = await pollRepository.CreatePollAsync(pollEntity);
+        var result = mapper.Map<PollModel>(pollEntity);
+        return result;
     }
 
     public async Task<PollModel> UpdatePollAsync(Guid pollId, UpdatePollModel updatePoll)
     {
-        var poll = await pollRepository.GetPollByIdAsync(pollId);
-        if (poll == null)
-            throw new EntityNotFoundException($"Poll {pollId} not found");
+        var poll = await PollHelper.FindPollByIdAsync(pollRepository, pollId);
+        var changedPoll = new Poll
+        {
+            Title = updatePoll.Title,
+            Description = updatePoll.Description
+        };
         poll.Title = updatePoll.Title;
         poll.Description = updatePoll.Description;
-        await pollRepository.UpdatePollAsync(poll);
-        poll = await pollRepository.GetPollByIdAsync(pollId);
-        var pollMapped = await GetPollByIdAsync(poll.Id);
+        var updatedPoll = await pollRepository.UpdatePollAsync(changedPoll, poll);
+        var pollMapped = mapper.Map<PollModel>(updatedPoll);
         return pollMapped;
     }
 
     public async Task DeletePollAsync(Guid id)
     {
+        var poll = await PollHelper.FindPollByIdAsync(pollRepository, id);
         await pollRepository.DeletePollAsync(id);
     }
 
     public async Task<PollModel> AddPollResponseAsync(Guid pollId, Guid optionId)
     {
         var httpContext = httpContextAccessor.HttpContext;
-        var userId = JwtHelper.GetUserIdFromToken(httpContext);
-        var user = await userService.GetUserByIdAsync((Guid)userId);
-        var option = await optionRepository.GetOptionByIdAsync(optionId);
+        var userId = jwtHelper.GetUserIdFromToken(httpContext);
+        if(userId == null)
+            throw new UnauthorizedAccessException("UserID from token was not found");
         var poll = await pollRepository.GetPollWithResponsesAsync(pollId);
-
         if (poll == null)
             throw new EntityNotFoundException($"Poll {pollId} not found");
+        var option = await optionRepository.GetOptionByIdAsync(optionId);
         if (option == null)
             throw new EntityNotFoundException($"Option {optionId} not found");
+        var user = await userService.GetUserByIdAsync((Guid)userId);
         if (user == null)
             throw new EntityNotFoundException($"User {userId} not found");
         if (poll.Id != option.PollId)

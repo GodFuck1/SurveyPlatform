@@ -21,22 +21,20 @@ public class PollRepository(
         return await context.Polls.Include(p => p.Options).ToListAsync();
     }
 
-    public async Task CreatePollAsync(Poll poll)
+    public async Task<Poll> CreatePollAsync(Poll poll)
     {
         await context.Polls.AddAsync(poll);
         await context.SaveChangesAsync();
+        return poll;
     }
 
-    public async Task UpdatePollAsync(Poll poll)
+    public async Task<Poll> UpdatePollAsync(Poll updatingPoll, Poll existingPoll)
     {
-        var existingPoll = await GetPollByIdAsync(poll.Id);
-        if (existingPoll != null)
-        {
-            existingPoll.Title = poll.Title;
-            existingPoll.Description = poll.Description;
-            existingPoll.UpdatedAt = DateTime.UtcNow;
-            await context.SaveChangesAsync();
-        }
+        existingPoll.Title = updatingPoll.Title;
+        existingPoll.Description = updatingPoll.Description;
+        existingPoll.UpdatedAt = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+        return existingPoll;
     }
 
     public async Task DeletePollAsync(Guid id)

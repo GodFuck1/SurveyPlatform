@@ -2,9 +2,9 @@
 using System.IdentityModel.Tokens.Jwt;
 
 namespace SurveyPlatform.BLL.Helpers;
-internal class JwtHelper
+public class JwtHelper: IJwtHelper
 {
-    internal static Guid? GetUserIdFromToken(HttpContext httpContext)
+    public virtual Guid? GetUserIdFromToken(HttpContext httpContext)
     {
         var authHeader = httpContext.Request.Headers["Authorization"].FirstOrDefault();
         if (authHeader != null && authHeader.StartsWith("Bearer "))

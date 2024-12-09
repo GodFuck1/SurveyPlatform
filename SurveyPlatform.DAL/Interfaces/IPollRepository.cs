@@ -8,7 +8,7 @@ public interface IPollRepository
     Task<Poll> GetPollWithResponsesAsync(Guid pollId); 
     Task<Poll> AddPollResponseAsync(PollResponse response);
     Task<IEnumerable<Poll>> GetAllPollsAsync();
-    Task CreatePollAsync(Poll poll);
-    Task UpdatePollAsync(Poll poll);
+    Task<Poll> CreatePollAsync(Poll poll);
+    Task<Poll> UpdatePollAsync(Poll updatingPoll, Poll existingPoll);
     Task DeletePollAsync(Guid id);
 }

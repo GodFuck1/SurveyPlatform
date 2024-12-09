@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SurveyPlatform.API.DTOs.Requests;
 using SurveyPlatform.BLL.Exceptions;
+using SurveyPlatform.BLL.Interfaces;
 using SurveyPlatform.BLL.Models;
-using SurveyPlatform.BLL.Services;
 using SurveyPlatform.DTOs.Responses;
+using System.ComponentModel;
 
 
 namespace SurveyPlatform.Controllers
@@ -14,7 +15,7 @@ namespace SurveyPlatform.Controllers
     [Authorize]
     [ApiController]
     public class PollsController(
-            PollService pollService, 
+            IPollService pollService, 
             IMapper mapper
         ) : ControllerBase
     {
@@ -23,6 +24,7 @@ namespace SurveyPlatform.Controllers
         /// </summary>
         /// <returns>Список опросов</returns>
         [HttpGet]
+        [EndpointDescription("Получение списка опросов (без результатов)")]
         public async Task<ActionResult<IEnumerable<PollDataResponse>>> GetPolls()
         {
             var pollsData = await pollService.GetAllPollsAsync();
@@ -36,6 +38,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="pollId"></param>
         /// <returns>Опрос</returns>
         [HttpGet("{pollId}")]
+        [EndpointDescription("Получение опроса по id (без результатов)")]
         public async Task<ActionResult<PollDataResponse>> GetPollById(Guid pollId)
         {
             var pollData = await pollService.GetPollByIdAsync(pollId);
@@ -49,6 +52,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="pollId"></param>
         /// <returns>Результаты опроса</returns>
         [HttpGet("{pollId}/results")]
+        [EndpointDescription("Получение результатов опроса")]
         public async Task<ActionResult<PollDataResponse>> GetPollResults(Guid pollId)
         {
             var pollResults = await pollService.GetResponsesByPollIdAsync(pollId);
@@ -57,24 +61,18 @@ namespace SurveyPlatform.Controllers
         }
 
         /// <summary>
-        /// Отправка ответа на опрос
+        /// Отправка ответа на опрос, UserID берётся из контекста(токен)
         /// </summary>
         /// <param name="pollId">ID опроса</param>
-        /// <param name="optionId">Тело запроса ID ответа и ID пользователя</param>
+        /// <param name="optionId">ID ответа</param>
         /// <returns>Результаты опроса после ответа</returns>
         [HttpGet("{pollId}/submit-response/{optionId}")]
+        [EndpointDescription("Отправка ответа на опрос, UserID берётся из контекста(токен)")]
         public async Task<ActionResult<PollDataResponse>> SubmitResponse(Guid pollId, Guid optionId)
         {
-            var poll = await pollService.GetPollByIdAsync(pollId);
-            if (poll == null)
-                throw new EntityNotFoundException("Poll not found");
-
-            var pollResults = await pollService.AddPollResponseAsync(pollId,optionId);
-            if (pollResults == null)
-                throw new UnauthorizedAccessException("User not found");
-
-            var pollMappedResults = mapper.Map<PollDataResponse>(pollResults);
-            return Ok(pollMappedResults);
+            var pollResult = await pollService.AddPollResponseAsync(pollId,optionId);
+            var result = mapper.Map<PollDataResponse>(pollResult);
+            return Ok(result);
         }
 
         /// <summary>
@@ -83,11 +81,13 @@ namespace SurveyPlatform.Controllers
         /// <param name="pollRequest"></param>
         /// <returns>Новый опрос</returns>
         [HttpPost]
+        [EndpointDescription("Создание опроса")]
         public async Task<ActionResult<PollDataResponse>> CreatePoll([FromForm] CreatePollRequest pollRequest)
         {
             var newPoll = mapper.Map<PollModel>(pollRequest);
-            await pollService.CreatePollAsync(newPoll);
-            return Ok();
+            var createdPoll = await pollService.CreatePollAsync(newPoll);
+            var result = mapper.Map<PollDataResponse>(createdPoll);
+            return Ok(result);
         }
 
 
@@ -98,11 +98,13 @@ namespace SurveyPlatform.Controllers
         /// <param name="updatePollRequest">Тело запроса с новыми Title & Description</param>
         /// <returns>Обновлённый опрос</returns>
         [HttpPut("{pollId}")]
+        [EndpointDescription("Обновление опроса")]
         public async Task<ActionResult<PollDataResponse>> UpdatePoll([FromRoute] Guid pollId,[FromForm] UpdatePollRequest updatePollRequest)
         {
             var mappedUpdatePollRequest = mapper.Map<UpdatePollModel>(updatePollRequest);
             var updatedPoll = await pollService.UpdatePollAsync(pollId,mappedUpdatePollRequest);
-            return Ok(updatedPoll);
+            var result = mapper.Map<PollDataResponse>(updatedPoll);
+            return Ok(result);
         }
 
         /// <summary>
@@ -111,6 +113,7 @@ namespace SurveyPlatform.Controllers
         /// <param name="id"></param>
         /// <returns>Статус 200 - удача</returns>
         [HttpDelete("{pollId}")]
+        [EndpointDescription("Удаление опроса")]
         public async Task<ActionResult> DeletePoll(Guid pollId)
         {
             await pollService.DeletePollAsync(pollId);
