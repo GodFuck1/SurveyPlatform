@@ -90,7 +90,7 @@ namespace SurveyPlatform.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ReActivateUser([FromRoute] Guid id)
         {
-            await userService.ChangeUserActivated(id);
+            await userService.ChangeUserActivatedAsync(id);
             return Ok();
         }
     }

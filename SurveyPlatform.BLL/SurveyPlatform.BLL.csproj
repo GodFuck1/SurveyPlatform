@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Helpers\PollHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SurveyPlatform.DAL\SurveyPlatform.DAL.csproj" />
   </ItemGroup>
 

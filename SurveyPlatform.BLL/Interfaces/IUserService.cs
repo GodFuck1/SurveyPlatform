@@ -3,7 +3,7 @@
 namespace SurveyPlatform.BLL.Interfaces;
 public interface IUserService
 {
-    Task ChangeUserActivated(Guid id);
+    Task ChangeUserActivatedAsync(Guid id);
     Task DeleteUserAsync(Guid id);
     Task<IEnumerable<UserModel>> GetAllUsersAsync();
     Task<UserModel> GetUserByIdAsync(Guid id);

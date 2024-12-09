@@ -12,7 +12,7 @@ public class UserRepository(
     {
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        return await GetUserById(user.Id);
+        return await GetUserByIdAsync(user.Id);
     }
 
     public async Task DeleteUserAsync(Guid id)
@@ -55,7 +55,7 @@ public class UserRepository(
     }
     public async Task ChangeActivateUserAsync(Guid id)
     {
-        var user = await GetUserById(id);
+        var user = await GetUserByIdAsync(id);
         user.IsDeactivated = !user.IsDeactivated;
         await context.SaveChangesAsync();
     }
@@ -65,11 +65,14 @@ public class UserRepository(
         return await context.Users.Include(p => p.Polls).Include(p => p.Responses).ToListAsync();
     }
 
-    public async Task<User?> GetUserById(Guid id)
-    {
-        return await context.Users.
+    public async Task<User?> GetUserByIdAsync(Guid id) =>
+        await context.Users.
             FirstOrDefaultAsync(u => u.Id == id);
-    }
+
+    public async Task<User?> GetUserByEmailAsync(string Email) => 
+        await context.Users.
+            FirstOrDefaultAsync(u => u.Email == Email);
+    
 
     public async Task<User?> GetUserPollsByIdAsync(Guid id) => 
         await context.Users
@@ -84,12 +87,12 @@ public class UserRepository(
 
     public async Task<User> UpdateUserAsync(User user)
     {
-        var existingUser = await GetUserById(user.Id);
+        var existingUser = await GetUserByIdAsync(user.Id);
         if (existingUser != null)
         {
             existingUser.Name = user.Name;
             await context.SaveChangesAsync();
-            return await GetUserById(user.Id);
+            return await GetUserByIdAsync(user.Id);
         }
         else return null;
     }
