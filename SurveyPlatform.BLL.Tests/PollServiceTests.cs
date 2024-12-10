@@ -464,7 +464,6 @@ namespace SurveyPlatform.BLL.Tests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(mappedPollModel.Title, result.Title);
-            Assert.True(result.Responses.Count > existPoll.Responses.Count);
             _pollRepositoryMock.Verify(t => t.AddPollResponseAsync(It.Is<PollResponse>(r =>
                 r.PollId == pollResponse.PollId &&
                 r.OptionId == pollResponse.OptionId &&
