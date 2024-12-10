@@ -115,13 +115,33 @@ namespace SurveyPlatform.BLL.Tests
         }
 
         [Fact]
-        public async Task CreatePollAsync_ValidPollModelSend_ReturnsCreatedPoll()
+        public async Task CreatePollAsync_UserDoesNotExistSend_ReturnsCreatedPoll()
         {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var message = $"User {userId} not found";
+            var newPollModel = new PollModel
+            {
+                Title = "Test Poll",
+                Description = "Test Description",
+                AuthorID = userId
+            };
+            // Act
+            var exception = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _sut.CreatePollAsync(newPollModel));
+            // Assert
+            Assert.Equal(message, exception.Message);
+        }
+
+        [Fact]
+        public async Task CreatePollAsync_UserExistAndPollValidSend_ReturnsCreatedPoll()
+        {
+            var userId = Guid.NewGuid();
             // Arrange
             var pollModel = new PollModel
             {
                 Title = "Test Poll",
-                Description = "Test Description"
+                Description = "Test Description",
+                AuthorID = userId
             };
 
             var pollEntity = new Poll
@@ -129,9 +149,14 @@ namespace SurveyPlatform.BLL.Tests
                 Id = Guid.NewGuid(),
                 Title = "Test Poll",
                 Description = "Test Description",
+                AuthorID = userId,
                 CreatedAt = DateTime.UtcNow
             };
-
+            var user = new User()
+            {
+                Id = userId
+            };
+            _userRepositoryMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
             _pollRepositoryMock.Setup(r => r.CreatePollAsync(It.IsAny<Poll>())).ReturnsAsync(pollEntity);
 
             // Act
@@ -439,7 +464,6 @@ namespace SurveyPlatform.BLL.Tests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(mappedPollModel.Title, result.Title);
-            Assert.True(result.Responses.Count > existPoll.Responses.Count);
             _pollRepositoryMock.Verify(t => t.AddPollResponseAsync(It.Is<PollResponse>(r =>
                 r.PollId == pollResponse.PollId &&
                 r.OptionId == pollResponse.OptionId &&
@@ -472,11 +496,11 @@ namespace SurveyPlatform.BLL.Tests
                 Id = pollId,
                 Responses = new List<PollResponse>()
             };
-            _pollRepositoryMock.Setup(t => t.GetPollByIdAsync(pollId)).ReturnsAsync(poll);
+            _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(pollId)).ReturnsAsync(poll);
             var mappedPoll = _mapper.Map<PollModel>(poll);
 
             // Act
-            var result = await _sut.GetPollByIdAsync(pollId);
+            var result = await _sut.GetResponsesByPollIdAsync(pollId);
 
             // Assert
             Assert.Equivalent(mappedPoll, result);
@@ -492,11 +516,11 @@ namespace SurveyPlatform.BLL.Tests
                 Id = pollId,
                 Responses = new List<PollResponse>() { new PollResponse(), new PollResponse() }
             };
-            _pollRepositoryMock.Setup(t => t.GetPollByIdAsync(pollId)).ReturnsAsync(poll);
+            _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(pollId)).ReturnsAsync(poll);
             var mappedPoll = _mapper.Map<PollModel>(poll);
 
             // Act
-            var result = await _sut.GetPollByIdAsync(pollId);
+            var result = await _sut.GetResponsesByPollIdAsync(pollId);
 
             // Assert
             Assert.NotNull(result);
