@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SurveyPlatform.API;
 using SurveyPlatform.API.Attributes;
 using SurveyPlatform.API.DTOs.Requests;
+using SurveyPlatform.BLL.Exceptions;
 using SurveyPlatform.BLL.Interfaces;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.Core;
@@ -15,7 +18,9 @@ namespace SurveyPlatform.Controllers
     [ApiController]
     public class UsersController(
             IUserService userService, 
-            IMapper mapper
+            IMapper mapper,
+            IJwtHelper jwtHelper,
+            IHttpContextAccessor httpContextAccessor
         ) : Controller
     {
 
@@ -42,6 +47,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserResponse>>> GetUsers()
         {
+            Utils.CheckUserToken(httpContextAccessor, jwtHelper);
             var users = await userService.GetAllUsersAsync();
             var allUsers = mapper.Map<List<UserResponse>>(users);
             return Ok(allUsers);
@@ -50,6 +56,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponse>> GetUserByID([FromRoute] Guid id)
         {
+            Utils.CheckUserToken(httpContextAccessor, jwtHelper);
             var users = await userService.GetUserByIdAsync(id);
             var userMapped = mapper.Map<UserResponse>(users);
             return Ok(userMapped);
@@ -58,6 +65,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}/responses")]
         public async Task<ActionResult<UserResponsesResponse>> GetUserResponses([FromRoute] Guid id)
         {
+            Utils.CheckUserToken(httpContextAccessor, jwtHelper);
             var users = await userService.GetUserResponsesByIdAsync(id);
             var userMapped = mapper.Map<UserResponsesResponse>(users);
             return Ok(userMapped);
@@ -66,6 +74,7 @@ namespace SurveyPlatform.Controllers
         [HttpGet("{id}/polls")]
         public async Task<ActionResult<UserPollsResponse>> GetUserPolls([FromRoute] Guid id)
         {
+            Utils.CheckUserToken(httpContextAccessor, jwtHelper);
             var users = await userService.GetUserPollsByIdAsync(id);
             var userMapped = mapper.Map<UserPollsResponse>(users);
             return Ok(userMapped);
@@ -74,6 +83,7 @@ namespace SurveyPlatform.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserResponse>> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
         {
+            Utils.CheckUserToken(httpContextAccessor, jwtHelper);
             var userMapped = mapper.Map<UpdateUserModel>(request);
             var updatedUser = await userService.UpdateUserAsync(id,userMapped);
             var updatedUserMapped = mapper.Map<UserResponse>(updatedUser);
@@ -81,17 +91,19 @@ namespace SurveyPlatform.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles ="Admin")]
+        [CustomAuthorize([Roles.SuperAdmin])]
         public async Task<ActionResult> DeleteUser([FromRoute] Guid id)
         {
+            Utils.CheckUserToken(httpContextAccessor, jwtHelper);
             await userService.DeleteUserAsync(id);
             return Ok();
         }
 
         [HttpPatch("{id}/reactivate")]
-        [Authorize(Roles = "Admin")]
+        [CustomAuthorize([Roles.SuperAdmin,Roles.Admin])]
         public async Task<ActionResult> ReActivateUser([FromRoute] Guid id)
         {
+            Utils.CheckUserToken(httpContextAccessor, jwtHelper);
             await userService.ChangeUserActivatedAsync(id);
             return Ok();
         }
