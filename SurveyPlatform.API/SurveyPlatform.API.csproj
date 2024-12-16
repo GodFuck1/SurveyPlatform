@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SurveyPlatform.BLL\SurveyPlatform.BLL.csproj" />
+    <ProjectReference Include="..\SurveyPlatform.Core\SurveyPlatform.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

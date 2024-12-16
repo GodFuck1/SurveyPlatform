@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SurveyPlatform.BLL.Interfaces;
+using SurveyPlatform.Core;
 using SurveyPlatform.DAL.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -37,7 +38,10 @@ public class TokenService(
         };
         foreach (var role in user.Roles)
         {
-            claims.Add(new Claim(ClaimTypes.Role, role));
+            if (Enum.TryParse<Roles>(role, out var parsedRole))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, ((int)parsedRole).ToString()));
+            }
         }
         return claims;
     }
