@@ -25,11 +25,21 @@ public class ExceptionMiddleware
             Console.WriteLine(ex.Message);
             await HandleEntityConflictExceptionAsync(httpContext, ex);
         }
+        catch (NotAuthorizedException ex)
+        {
+            Console.WriteLine(ex.Message);
+            await HandleNotAuthorizedExceptionAsync(httpContext, ex);
+        }
         catch (Exception ex)
         {
             Console.WriteLine($"Something went wrong: {ex}");
             await HandleExceptionAsync(httpContext, ex);
         }
+    }
+    private async Task HandleNotAuthorizedExceptionAsync(HttpContext context, Exception exception)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        await ProceedExceptionData(context, exception.Message);
     }
     private async Task HandleEntityNotFoundExceptionAsync(HttpContext context, Exception exception)
     {
