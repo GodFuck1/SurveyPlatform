@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SurveyPlatform.Core\SurveyPlatform.Core.csproj" />
     <ProjectReference Include="..\SurveyPlatform.DAL\SurveyPlatform.DAL.csproj" />
   </ItemGroup>
 

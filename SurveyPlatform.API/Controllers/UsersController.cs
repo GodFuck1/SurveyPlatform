@@ -1,18 +1,20 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SurveyPlatform.API.Attributes;
 using SurveyPlatform.API.DTOs.Requests;
+using SurveyPlatform.BLL.Interfaces;
 using SurveyPlatform.BLL.Models;
-using SurveyPlatform.BLL.Services;
+using SurveyPlatform.Core;
 using SurveyPlatform.DTOs.Responses;
 
 namespace SurveyPlatform.Controllers
 {
     [Route("api/users")]
-    [Authorize]
+    [CustomAuthorize([Roles.User, Roles.Moderator, Roles.Admin, Roles.SuperAdmin])]
     [ApiController]
     public class UsersController(
-            UserService userService, 
+            IUserService userService, 
             IMapper mapper
         ) : Controller
     {
