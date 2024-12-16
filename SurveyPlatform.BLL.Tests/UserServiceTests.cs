@@ -7,7 +7,6 @@ using SurveyPlatform.BLL.Models;
 using SurveyPlatform.BLL.Services;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
-using System;
 
 namespace SurveyPlatform.BLL.Tests;
 public class UserServiceTests
@@ -117,7 +116,9 @@ public class UserServiceTests
 
         // Act
         var userPolls = await _sut.GetUserPollsByIdAsync(userId);
+
         // Assert
+        Assert.NotNull(userPolls);
         Assert.Equal(user.Id, userPolls.Id);
     }
 

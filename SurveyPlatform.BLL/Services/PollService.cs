@@ -6,13 +6,14 @@ using SurveyPlatform.BLL.Interfaces;
 using SurveyPlatform.BLL.Models;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
+using System.Net.Http;
 namespace SurveyPlatform.BLL.Services;
 public class PollService(
         IPollRepository pollRepository,
         IMapper mapper,
         IHttpContextAccessor httpContextAccessor,
         IOptionRepository optionRepository,
-        IUserService userService,
+        IUserRepository userRepository,
         IJwtHelper jwtHelper
     ) : IPollService
 {
@@ -32,6 +33,7 @@ public class PollService(
 
     public async Task<PollModel> CreatePollAsync(PollModel poll)
     {
+        var user = await UserHelper.FindUserByIdAsync(userRepository, poll.AuthorID);
         var pollEntity = mapper.Map<Poll>(poll);
         pollEntity.CreatedAt = DateTime.UtcNow;
         var createdPoll = await pollRepository.CreatePollAsync(pollEntity);
@@ -72,7 +74,7 @@ public class PollService(
         var option = await optionRepository.GetOptionByIdAsync(optionId);
         if (option == null)
             throw new EntityNotFoundException($"Option {optionId} not found");
-        var user = await userService.GetUserByIdAsync((Guid)userId);
+        var user = await UserHelper.FindUserByIdAsync(userRepository,(Guid)userId);
         if (user == null)
             throw new EntityNotFoundException($"User {userId} not found");
         if (poll.Id != option.PollId)

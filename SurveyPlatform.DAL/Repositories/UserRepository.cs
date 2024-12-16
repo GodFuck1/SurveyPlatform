@@ -20,38 +20,6 @@ public class UserRepository(
         var user = await context.Users.SingleOrDefaultAsync(x => x.Id == id);
         context.Users.Remove(user);
         await context.SaveChangesAsync();
-        /*
-        using var transaction = await context.Database.BeginTransactionAsync();
-        try
-        {
-            var userToDelete = await context.Users
-                .Include(u => u.Polls)
-                .ThenInclude(p => p.Responses)
-                .Include(u => u.Responses)
-                .FirstOrDefaultAsync(u => u.Id == id);
-            if (userToDelete != null)
-            {
-                foreach (var poll in userToDelete.Polls)
-                {
-                    //все ответы, связанные с опросами пользователя
-                    var responsesToDelete = await context.PollResponses 
-                        .Where(r => r.PollId == poll.Id)
-                        .ToListAsync();
-                    context.PollResponses.RemoveRange(responsesToDelete);
-                }
-                context.Polls.RemoveRange(userToDelete.Polls);//все опросы пользователя
-                context.PollResponses.RemoveRange(userToDelete.Responses);//все ответы пользователя
-                context.Users.Remove(userToDelete);
-                await context.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync();
-            Console.WriteLine($"Error deleting user with ID {id}: {ex.Message}");
-            throw;
-        }*/
     }
     public async Task ChangeActivateUserAsync(Guid id)
     {

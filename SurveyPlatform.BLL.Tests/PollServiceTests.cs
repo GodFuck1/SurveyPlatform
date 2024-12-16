@@ -8,17 +8,12 @@ using SurveyPlatform.BLL.Services;
 using SurveyPlatform.DAL.Entities;
 using SurveyPlatform.DAL.Interfaces;
 using SurveyPlatform.BLL.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace SurveyPlatform.BLL.Tests
 {
     public class PollServiceTests
     {
-        private readonly Mock<IUserService> _userServiceMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IPollRepository> _pollRepositoryMock;
         private readonly Mock<IOptionRepository> _optionRepositoryMock;
         private readonly Mock<JwtHelper> _jwtHelperMock;
@@ -40,7 +35,7 @@ namespace SurveyPlatform.BLL.Tests
             _mapper = new Mapper(mapperConfig);
             _pollRepositoryMock = new Mock<IPollRepository>();
             _optionRepositoryMock = new Mock<IOptionRepository>();
-            _userServiceMock = new Mock<IUserService>();
+            _userRepositoryMock = new Mock<IUserRepository>();
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _jwtHelperMock = new Mock<JwtHelper>();
             _sut = new PollService(
@@ -48,7 +43,7 @@ namespace SurveyPlatform.BLL.Tests
                 _mapper,
                 _httpContextAccessorMock.Object,
                 _optionRepositoryMock.Object,
-                _userServiceMock.Object,
+                _userRepositoryMock.Object,
                 _jwtHelperMock.Object
             );
         }
@@ -120,13 +115,33 @@ namespace SurveyPlatform.BLL.Tests
         }
 
         [Fact]
-        public async Task CreatePollAsync_ValidPollModelSend_ReturnsCreatedPoll()
+        public async Task CreatePollAsync_UserDoesNotExistSend_ReturnsCreatedPoll()
         {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var message = $"User {userId} not found";
+            var newPollModel = new PollModel
+            {
+                Title = "Test Poll",
+                Description = "Test Description",
+                AuthorID = userId
+            };
+            // Act
+            var exception = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _sut.CreatePollAsync(newPollModel));
+            // Assert
+            Assert.Equal(message, exception.Message);
+        }
+
+        [Fact]
+        public async Task CreatePollAsync_UserExistAndPollValidSend_ReturnsCreatedPoll()
+        {
+            var userId = Guid.NewGuid();
             // Arrange
             var pollModel = new PollModel
             {
                 Title = "Test Poll",
-                Description = "Test Description"
+                Description = "Test Description",
+                AuthorID = userId
             };
 
             var pollEntity = new Poll
@@ -134,9 +149,14 @@ namespace SurveyPlatform.BLL.Tests
                 Id = Guid.NewGuid(),
                 Title = "Test Poll",
                 Description = "Test Description",
+                AuthorID = userId,
                 CreatedAt = DateTime.UtcNow
             };
-
+            var user = new User()
+            {
+                Id = userId
+            };
+            _userRepositoryMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
             _pollRepositoryMock.Setup(r => r.CreatePollAsync(It.IsAny<Poll>())).ReturnsAsync(pollEntity);
 
             // Act
@@ -311,8 +331,8 @@ namespace SurveyPlatform.BLL.Tests
             _jwtHelperMock.Setup(t => t.GetUserIdFromToken(It.IsAny<HttpContext>())).Returns(userId);
             _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(existPoll.Id)).ReturnsAsync(existPoll);
             _optionRepositoryMock.Setup(t => t.GetOptionByIdAsync(optionId)).ReturnsAsync(new PollOption());
-            _userServiceMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync((UserModel)null);
-            
+            _userRepositoryMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync((User)null);
+
             // Act
             var exception = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _sut.AddPollResponseAsync(existPoll.Id, optionId));
 
@@ -337,7 +357,7 @@ namespace SurveyPlatform.BLL.Tests
                 Id = pollId,
                 Options = new List<PollOption> { new PollOption(), option }
             };
-            var user = new UserModel()
+            var user = new User()
             {
                 Id = userId
             };
@@ -346,7 +366,7 @@ namespace SurveyPlatform.BLL.Tests
             _jwtHelperMock.Setup(t => t.GetUserIdFromToken(It.IsAny<HttpContext>())).Returns(userId);
             _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(existPoll.Id)).ReturnsAsync(existPoll);
             _optionRepositoryMock.Setup(t => t.GetOptionByIdAsync(optionId)).ReturnsAsync(new PollOption());
-            _userServiceMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
 
             // Act
             var exception = await Assert.ThrowsAsync<EntityConflictException>(async () => await _sut.AddPollResponseAsync(existPoll.Id, optionId));
@@ -373,7 +393,7 @@ namespace SurveyPlatform.BLL.Tests
                 Options = new List<PollOption> { new PollOption(), option },
                 Responses = new List<PollResponse> { new PollResponse { UserId = userId } }
             };
-            var user = new UserModel()
+            var user = new User()
             {
                 Id = userId
             };
@@ -382,7 +402,7 @@ namespace SurveyPlatform.BLL.Tests
             _jwtHelperMock.Setup(t => t.GetUserIdFromToken(It.IsAny<HttpContext>())).Returns(userId);
             _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(existPoll.Id)).ReturnsAsync(existPoll);
             _optionRepositoryMock.Setup(t => t.GetOptionByIdAsync(optionId)).ReturnsAsync(option);
-            _userServiceMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
 
             // Act
             var exception = await Assert.ThrowsAsync<EntityConflictException>(async () => await _sut.AddPollResponseAsync(existPoll.Id, optionId));
@@ -410,7 +430,7 @@ namespace SurveyPlatform.BLL.Tests
                 Options = new List<PollOption> { new PollOption(), option },
                 Responses = new List<PollResponse> { new PollResponse(), new PollResponse() }
             };
-            var user = new UserModel()
+            var user = new User()
             {
                 Id = userId
             };
@@ -430,8 +450,12 @@ namespace SurveyPlatform.BLL.Tests
             _jwtHelperMock.Setup(t => t.GetUserIdFromToken(It.IsAny<HttpContext>())).Returns(userId);
             _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(existPoll.Id)).ReturnsAsync(existPoll);
             _optionRepositoryMock.Setup(t => t.GetOptionByIdAsync(optionId)).ReturnsAsync(option);
-            _userServiceMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
-            _pollRepositoryMock.Setup(t => t.AddPollResponseAsync(It.IsAny<PollResponse>())).ReturnsAsync(respondedPoll);
+            _userRepositoryMock.Setup(t => t.GetUserByIdAsync(userId)).ReturnsAsync(user);
+            _pollRepositoryMock.Setup(t => t.AddPollResponseAsync(It.Is<PollResponse>(r =>
+                r.PollId == pollResponse.PollId &&
+                r.OptionId == pollResponse.OptionId &&
+                r.UserId == pollResponse.UserId)))
+                .ReturnsAsync(respondedPoll);
             var mappedPollModel = _mapper.Map<PollModel>(respondedPoll);
 
             // Act
@@ -440,11 +464,13 @@ namespace SurveyPlatform.BLL.Tests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(mappedPollModel.Title, result.Title);
-            Assert.True(result.Responses.Count > existPoll.Responses.Count);
-            _pollRepositoryMock.Verify(t => t.AddPollResponseAsync(It.IsAny<PollResponse>()), Times.Once);
+            _pollRepositoryMock.Verify(t => t.AddPollResponseAsync(It.Is<PollResponse>(r =>
+                r.PollId == pollResponse.PollId &&
+                r.OptionId == pollResponse.OptionId &&
+                r.UserId == pollResponse.UserId)), Times.Once);
             _pollRepositoryMock.Verify(t => t.GetPollWithResponsesAsync(existPoll.Id), Times.Once);
             _optionRepositoryMock.Verify(t => t.GetOptionByIdAsync(optionId), Times.Once);
-            _userServiceMock.Verify(t => t.GetUserByIdAsync(userId), Times.Once);
+            _userRepositoryMock.Verify(t => t.GetUserByIdAsync(userId), Times.Once);
         }
 
         [Fact]
@@ -470,11 +496,11 @@ namespace SurveyPlatform.BLL.Tests
                 Id = pollId,
                 Responses = new List<PollResponse>()
             };
-            _pollRepositoryMock.Setup(t => t.GetPollByIdAsync(pollId)).ReturnsAsync(poll);
+            _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(pollId)).ReturnsAsync(poll);
             var mappedPoll = _mapper.Map<PollModel>(poll);
 
             // Act
-            var result = await _sut.GetPollByIdAsync(pollId);
+            var result = await _sut.GetResponsesByPollIdAsync(pollId);
 
             // Assert
             Assert.Equivalent(mappedPoll, result);
@@ -490,11 +516,11 @@ namespace SurveyPlatform.BLL.Tests
                 Id = pollId,
                 Responses = new List<PollResponse>() { new PollResponse(), new PollResponse() }
             };
-            _pollRepositoryMock.Setup(t => t.GetPollByIdAsync(pollId)).ReturnsAsync(poll);
+            _pollRepositoryMock.Setup(t => t.GetPollWithResponsesAsync(pollId)).ReturnsAsync(poll);
             var mappedPoll = _mapper.Map<PollModel>(poll);
 
             // Act
-            var result = await _sut.GetPollByIdAsync(pollId);
+            var result = await _sut.GetResponsesByPollIdAsync(pollId);
 
             // Assert
             Assert.NotNull(result);

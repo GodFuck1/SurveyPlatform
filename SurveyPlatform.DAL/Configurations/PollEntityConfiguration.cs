@@ -27,8 +27,12 @@ internal static class PollEntityConfiguration
         modelBuilder.Entity<Poll>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Title).IsRequired();
-            entity.Property(e => e.Description).IsRequired();
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(500);
             entity.Property(e => e.AuthorID).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.Property(e => e.UpdatedAt).IsRequired();

@@ -12,6 +12,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SurveyPlatform.Core\SurveyPlatform.Core.csproj" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SurveyPlatform.DAL\SurveyPlatform.DAL.csproj" />
   </ItemGroup>
 
